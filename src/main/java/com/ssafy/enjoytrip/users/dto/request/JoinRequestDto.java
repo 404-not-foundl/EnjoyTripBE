@@ -8,8 +8,14 @@ import javax.validation.constraints.NotBlank;
 public class JoinRequestDto {
 
     @NotBlank
-    private String userLoginId;
+    private String userLogId;
 
     @NotBlank
-    private String userPassword;
+    private String userPwd;
+
+    @NotBlank
+    private String userNick;
+
+    @NotBlank
+    private String userPwdQue;
 }

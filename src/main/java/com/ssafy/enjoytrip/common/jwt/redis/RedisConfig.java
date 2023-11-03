@@ -1,4 +1,4 @@
-package com.ssafy.enjoytrip.common.jwt.Redis;
+package com.ssafy.enjoytrip.common.jwt.redis;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
