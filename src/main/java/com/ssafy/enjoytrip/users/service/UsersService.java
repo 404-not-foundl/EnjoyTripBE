@@ -7,6 +7,7 @@ import com.ssafy.enjoytrip.users.entity.Users;
 import com.ssafy.enjoytrip.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -14,6 +15,8 @@ import javax.transaction.Transactional;
 @Service
 @RequiredArgsConstructor
 public class UsersService {
+
+    @Autowired
     private UsersRepository usersRepository;
 
     @Transactional
@@ -33,7 +36,7 @@ public class UsersService {
     }
 
     public boolean checkId(CheckDuplicateDto requestDto){
-        return usersRepository.findByUserLoginIdAndDeletedDateIsNull(requestDto.getDuplicate()).isPresent();
+        return usersRepository.findByUserLoginId(requestDto.getDuplicate()).isPresent();
     }
 
     public boolean checkNickname(CheckDuplicateDto requestDto){

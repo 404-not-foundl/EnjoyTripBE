@@ -12,4 +12,6 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
     Optional<Users> findById(Long id);
     Optional<Users> findByUserLoginIdAndDeletedDateIsNull(String userLogId);
     Optional<Users> findByUserNicknameAndDeletedDateIsNull(String userNick);
+
+    Optional<Object> findByUserLoginId(String duplicate);
 }
