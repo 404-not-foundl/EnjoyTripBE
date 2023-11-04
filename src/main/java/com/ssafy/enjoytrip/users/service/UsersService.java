@@ -6,8 +6,8 @@ import com.ssafy.enjoytrip.users.dto.request.JoinRequestDto;
 import com.ssafy.enjoytrip.users.entity.Users;
 import com.ssafy.enjoytrip.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
-import org.mindrot.jbcrypt.BCrypt;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -16,12 +16,12 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class UsersService {
 
-    @Autowired
-    private UsersRepository usersRepository;
+    private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    private final UsersRepository usersRepository;
 
     @Transactional
     public MsgType join(JoinRequestDto requestDto){
-        String encodedPwd = BCrypt.hashpw(requestDto.getUserPwd(), BCrypt.gensalt());
+        String encodedPwd = passwordEncoder.encode(requestDto.getUserPwd());
 
         Users user = Users.builder()
                 .userLoginId(requestDto.getUserLogId())
@@ -36,7 +36,7 @@ public class UsersService {
     }
 
     public boolean checkId(CheckDuplicateDto requestDto){
-        return usersRepository.findByUserLoginId(requestDto.getDuplicate()).isPresent();
+        return usersRepository.findByUserLoginIdAndDeletedDateIsNull(requestDto.getDuplicate()).isPresent();
     }
 
     public boolean checkNickname(CheckDuplicateDto requestDto){
