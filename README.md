@@ -28,6 +28,8 @@
 BCrypt는 decoding이 되지 않기 때문에 새로운 비밀번호를 수정할 수 있도록 하였습니다.
 특히 유저 정보 중 수정 할 수 있는것은 비밀번호만 설정하였습니다.
 
+### user-delete
+
 ## Attraction
 
 ### all
