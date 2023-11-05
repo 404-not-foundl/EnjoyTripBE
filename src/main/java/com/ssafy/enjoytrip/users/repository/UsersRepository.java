@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface UsersRepository extends JpaRepository<Users, Long>{
-    Optional<Users> findById(Long id);
     Optional<Users> findByUserLoginIdAndDeletedDateIsNull(String userLogId);
     Optional<Users> findByUserNicknameAndDeletedDateIsNull(String userNick);
+    Optional<Users> findByUserLoginIdAndUserPasswordQuestionAndDeletedDateIsNull(String userLoginId, String userPasswordQuestion);
 }
