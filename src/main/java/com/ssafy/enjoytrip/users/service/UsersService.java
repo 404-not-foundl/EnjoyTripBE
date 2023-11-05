@@ -2,7 +2,9 @@ package com.ssafy.enjoytrip.users.service;
 
 import com.ssafy.enjoytrip.common.response.MsgType;
 import com.ssafy.enjoytrip.users.dto.request.CheckDuplicateDto;
+import com.ssafy.enjoytrip.users.dto.request.FindPasswordRequestDto;
 import com.ssafy.enjoytrip.users.dto.request.JoinRequestDto;
+import com.ssafy.enjoytrip.users.dto.response.FindPasswordResponsDto;
 import com.ssafy.enjoytrip.users.entity.Users;
 import com.ssafy.enjoytrip.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -41,5 +44,15 @@ public class UsersService {
 
     public boolean checkNickname(CheckDuplicateDto requestDto){
         return usersRepository.findByUserNicknameAndDeletedDateIsNull(requestDto.getDuplicate()).isPresent();
+    }
+
+    public Boolean findPassword(FindPasswordRequestDto requestDto){
+        Optional<Users> usersOptional = usersRepository.findByUserLoginIdAndUserPasswordQuestionAndDeletedDateIsNull(requestDto.getUserLogId(), requestDto.getUserPwdQue());
+        if(usersOptional.isPresent()) {
+            Users user = usersOptional.get();
+            user.setUserPassword(passwordEncoder.encode(requestDto.getNewPassword()));
+            usersRepository.save(user);
+        }
+        return usersOptional.isPresent();
     }
 }

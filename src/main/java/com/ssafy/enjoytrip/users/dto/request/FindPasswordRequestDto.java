@@ -7,4 +7,5 @@ public class FindPasswordRequestDto {
 
     private String userLogId;
     private String userPwdQue;
+    private String newPassword;
 }
