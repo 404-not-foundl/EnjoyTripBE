@@ -8,10 +8,8 @@ import javax.persistence.Id;
 import java.util.Optional;
 
 @Repository
-public interface UsersRepository extends JpaRepository<Users, Long> {
-    Optional<Users> findById(Long id);
+public interface UsersRepository extends JpaRepository<Users, Long>{
     Optional<Users> findByUserLoginIdAndDeletedDateIsNull(String userLogId);
     Optional<Users> findByUserNicknameAndDeletedDateIsNull(String userNick);
-
-    Optional<Object> findByUserLoginId(String duplicate);
+    Optional<Users> findByUserLoginIdAndUserPasswordQuestionAndDeletedDateIsNull(String userLoginId, String userPasswordQuestion);
 }
