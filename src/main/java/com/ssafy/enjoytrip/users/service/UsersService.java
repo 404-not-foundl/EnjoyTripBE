@@ -42,4 +42,5 @@ public class UsersService {
     public boolean checkNickname(CheckDuplicateDto requestDto){
         return usersRepository.findByUserNicknameAndDeletedDateIsNull(requestDto.getDuplicate()).isPresent();
     }
+
 }
