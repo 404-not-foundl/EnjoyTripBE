@@ -1,4 +1,4 @@
-package com.ssafy.enjoytrip.travelCourse.entity;
+package com.ssafy.enjoytrip.travelCourses.entity;
 
 import lombok.*;
 
@@ -10,7 +10,7 @@ import javax.persistence.Entity;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TravelCourseListAttraction extends TravelCourseAttraction{
+public class TravelCoursesListAttraction extends TravelCoursesAttraction {
 
     private String memo;
     private int index;

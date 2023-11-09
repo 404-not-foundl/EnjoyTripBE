@@ -1,4 +1,4 @@
-package com.ssafy.enjoytrip.travelCourse.entity;
+package com.ssafy.enjoytrip.travelCourses.entity;
 
 import com.ssafy.enjoytrip.common.entity.BaseTime;
 import lombok.*;
@@ -12,10 +12,10 @@ import javax.persistence.Id;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TravelCourseAttraction extends BaseTime {
+public class TravelCoursesAttraction extends BaseTime {
 
     @Id @GeneratedValue
-    private Long travelCourseAttractionId;
+    private Long travelCoursesAttractionId;
 
     private String name;
     private String category;
