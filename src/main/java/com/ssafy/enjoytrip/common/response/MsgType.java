@@ -13,7 +13,8 @@ public enum MsgType {
     CHECK_ID_YES_DUPLICATE("아이디 중복 있음"),
     NO_SUCH_USER("회원이 존재하지 않음"),
     PASSWORD_CHANGE_COMPLETE("비밀번호 변경 완료"),
-    USER_DELETED_COMPLETE("계정삭제 완료");
+    USER_DELETED_COMPLETE("계정 삭제 완료"),
+    TRAVEL_COURSE_LIST_SAVE_COMPLETE("여행 일정 저장 완료");
 
 
     private final String msg;
