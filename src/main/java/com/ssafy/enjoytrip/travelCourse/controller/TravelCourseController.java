@@ -14,12 +14,12 @@ import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/travel-course")
+@RequestMapping("/travel-courses")
 public class TravelCourseController {
 
     private final TravelCourseSaveService travelCourseSaveService;
 
-    @PostMapping("/save")
+    @PostMapping("/course")
     public ApiResponseDto<Void> saving(@RequestBody TravelCourseSavingRequestDto requestDto, HttpServletResponse response){
         return ResponseUtil.ok(travelCourseSaveService.saving(requestDto));
     }
