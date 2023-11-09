@@ -1,4 +1,4 @@
-package com.ssafy.enjoytrip.common.security;
+package com.ssafy.enjoytrip.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
