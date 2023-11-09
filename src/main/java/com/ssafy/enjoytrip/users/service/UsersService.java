@@ -25,7 +25,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UsersService {
 
-    private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    private final PasswordEncoder passwordEncoder;
     private final UsersRepository usersRepository;
 
     @Transactional
