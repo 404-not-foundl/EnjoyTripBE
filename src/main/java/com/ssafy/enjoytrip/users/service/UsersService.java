@@ -68,6 +68,7 @@ public class UsersService {
             CookieGenerator cg = new CookieGenerator();
             cg.setCookieName("cookie");
             cg.setCookieMaxAge(3600);
+            cg.setCookieHttpOnly(true);
             cg.addCookie(response, usersOptional.get().getUserLoginId());
             return true;
         }else return false;
