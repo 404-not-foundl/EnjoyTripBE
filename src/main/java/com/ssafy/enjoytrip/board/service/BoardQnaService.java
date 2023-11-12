@@ -124,37 +124,26 @@ public class BoardQnaService {
         Page<BoardQnaListArticleProjection> page;
         if(requestDto.getSearchWord().isEmpty()){
             page = boardQnaRepository.findAllByDeletedDateIsNull(pageable);
-            return BoardQnaListOfArticleResponseDto.builder()
-                    .totalPage(page.getTotalPages())
-                    .articleList(page)
-                    .build();
         }else{
             if(requestDto.getSearchCategory().equals("articleNum")){
                 Long articleId = null;
                 try {
                     articleId = Long.parseLong(requestDto.getSearchWord());
                     page = boardQnaRepository.findByArticleIdAndDeletedDateIsNull(articleId, pageable);
-                    return BoardQnaListOfArticleResponseDto.builder()
-                            .totalPage(page.getTotalPages())
-                            .articleList(page)
-                            .build();
                 }catch (NumberFormatException e){
                     return null;
                 }
             } else if (requestDto.getSearchCategory().equals("title")) {
                 page = boardQnaRepository.findByTitleContainingAndDeletedDateIsNull(requestDto.getSearchWord(), pageable);
-                return BoardQnaListOfArticleResponseDto.builder()
-                        .totalPage(page.getTotalPages())
-                        .articleList(page)
-                        .build();
             } else {
                 page = boardQnaRepository.findByUserNickContainingAndDeletedDateIsNull(requestDto.getSearchWord(), pageable);
-                return BoardQnaListOfArticleResponseDto.builder()
-                        .totalPage(page.getTotalPages())
-                        .articleList(page)
-                        .build();
             }
         }
+
+        return BoardQnaListOfArticleResponseDto.builder()
+                .totalPage(page.getTotalPages())
+                .articleList(page.getContent())
+                .build();
     }
 
     public Cookie checkCookieUserId(HttpServletRequest request){
