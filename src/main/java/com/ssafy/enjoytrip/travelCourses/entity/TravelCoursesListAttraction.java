@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 @Entity
 @Getter
 @Setter
-@Builder
+@Builder(builderMethodName = "TravelCoursesListAttractionBuilder")
 @NoArgsConstructor
 @AllArgsConstructor
 public class TravelCoursesListAttraction extends TravelCoursesAttraction {

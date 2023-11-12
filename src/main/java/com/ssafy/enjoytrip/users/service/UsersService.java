@@ -25,7 +25,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UsersService {
 
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
     private final UsersRepository usersRepository;
 
     @Transactional
@@ -66,16 +66,15 @@ public class UsersService {
         Optional<Users> usersOptional = usersRepository.findByUserLoginIdAndDeletedDateIsNull(requestDto.getUserLogId());
         if(usersOptional.isPresent() && passwordEncoder.matches(requestDto.getUserPwd(), usersOptional.get().getUserPassword())){
             CookieGenerator cg = new CookieGenerator();
-            cg.setCookieName("cookie");
+            cg.setCookieName("userId");
             cg.setCookieMaxAge(3600);
-            cg.setCookieHttpOnly(true);
             cg.addCookie(response, usersOptional.get().getUserLoginId());
             return true;
         }else return false;
     }
 
     public MsgType logout(HttpServletResponse response){
-        Cookie deleteCookie = new Cookie("cookie", null);
+        Cookie deleteCookie = new Cookie("userId", null);
         deleteCookie.setMaxAge(0);
         response.addCookie(deleteCookie);
         return MsgType.LOGOUT_SUCCESSFULLY;
@@ -87,7 +86,7 @@ public class UsersService {
 
         if(cookies != null){
             for(Cookie cookie : cookies){
-                if(cookie.getName().equals("cookie")){
+                if(cookie.getName().equals("userId")){
                     userLoginId = cookie.getValue();
                     Optional<Users> optionalUsers = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId);
                     if(optionalUsers.isPresent()){
@@ -110,7 +109,7 @@ public class UsersService {
 
         if(cookies != null){
             for(Cookie cookie : cookies){
-                if(cookie.getName().equals("cookie")){
+                if(cookie.getName().equals("userId")){
                     userLoginId = cookie.getValue();
                     Optional<Users> optionalUsers = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId);
                     if(optionalUsers.isPresent()){
