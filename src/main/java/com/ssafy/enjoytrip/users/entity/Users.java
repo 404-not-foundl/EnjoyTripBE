@@ -3,10 +3,8 @@ package com.ssafy.enjoytrip.users.entity;
 import com.ssafy.enjoytrip.common.entity.BaseTime;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+
 @Builder
 @Entity
 @Getter @Setter
@@ -14,7 +12,7 @@ import javax.persistence.Id;
 @NoArgsConstructor
 public class Users extends BaseTime {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
 
