@@ -28,4 +28,6 @@ public class Users extends BaseTime {
     private String userPhoneNumber;
     @Column(nullable = false, length = 100)
     private String userEmail;
+    @Column(length = 100)
+    private String userProfileImage;
 }

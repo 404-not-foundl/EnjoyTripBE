@@ -11,6 +11,9 @@ import com.ssafy.enjoytrip.users.dto.response.FindPasswordResponsDto;
 import com.ssafy.enjoytrip.users.dto.response.UserInfoDto;
 import com.ssafy.enjoytrip.users.service.UsersService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -75,5 +78,10 @@ public class UsersController {
     @DeleteMapping("/image")
     public ApiResponseDto<Void> deleteImage(HttpServletRequest request){
         return ResponseUtil.ok(usersService.deleteProfileImage(request));
+    }
+
+    @GetMapping("/image")
+    public ResponseEntity<Resource> showImage(@RequestParam("filename") String filename){
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(usersService.getImage(filename));
     }
 }

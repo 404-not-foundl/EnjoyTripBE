@@ -11,6 +11,8 @@ import com.ssafy.enjoytrip.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -106,6 +109,9 @@ public class UsersService {
                       return UserInfoDto.builder()
                               .userLogId(optionalUsers.get().getUserLoginId())
                               .userNick(optionalUsers.get().getUserNickname())
+                              .userNation(optionalUsers.get().getUserNationality())
+                              .userEmail(optionalUsers.get().getUserEmail())
+                              .userProfileImage(optionalUsers.get().getUserProfileImage())
                               .build();
                     }
                     break;
@@ -147,6 +153,8 @@ public class UsersService {
         try{
             Path filePath = Path.of(uploadDirUserImg, fileName);
             Files.copy(userImage.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            user.setUserProfileImage(fileName);
+            usersRepository.save(user);
         }catch (IOException e){
             return MsgType.FILE_UPLOAD_FAIL;
         }
@@ -165,11 +173,23 @@ public class UsersService {
 
         try{
             Files.deleteIfExists(filePath);
+            user.setUserProfileImage(null);
+            usersRepository.save(user);
         }catch (IOException e){
             return MsgType.NO_FILE_EXIST;
         }
 
          return MsgType.FILE_DELETE_COMPLETE;
+    }
+
+    public Resource getImage(String filename){
+        try{
+            Path filePath = Paths.get(uploadDirUserImg, filename);
+            byte[] imageBytes = Files.readAllBytes(filePath);
+            return new ByteArrayResource(imageBytes);
+        }catch (IOException e){
+            return null;
+        }
     }
 
     public Cookie checkCookieUserId(HttpServletRequest request){
