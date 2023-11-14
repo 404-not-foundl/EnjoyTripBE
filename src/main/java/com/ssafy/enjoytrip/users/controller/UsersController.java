@@ -71,4 +71,9 @@ public class UsersController {
     public ApiResponseDto<Void> image(@RequestParam("userImage")MultipartFile userImage, HttpServletRequest request){
         return ResponseUtil.ok(usersService.profileImage(userImage, request));
     }
+
+    @DeleteMapping("/image")
+    public ApiResponseDto<Void> deleteImage(HttpServletRequest request){
+        return ResponseUtil.ok(usersService.deleteProfileImage(request));
+    }
 }

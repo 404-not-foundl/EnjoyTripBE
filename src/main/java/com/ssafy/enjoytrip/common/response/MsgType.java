@@ -25,7 +25,8 @@ public enum MsgType {
     QNA_ARTICLE_DOES_NOT_EXIST("Qna Article이 존재하지 않습니다."),
     TRAVEL_COURSE_LIST_SAVE_COMPLETE("여행 일정 저장 완료"),
     NO_FILE_EXIST("파일이 존재하지 않습니다."),
-    FILE_UPLOAD_FAIL("파일 업로드에 실패하였습니다");
+    FILE_UPLOAD_FAIL("파일 업로드에 실패하였습니다."),
+    FILE_DELETE_COMPLETE("파일 삭제를 완료하였습니다.");
 
 
 

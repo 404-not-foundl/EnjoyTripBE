@@ -154,6 +154,24 @@ public class UsersService {
         return MsgType.USER_IMAGE_UPLOAD_COMPLETE;
     }
 
+    public MsgType deleteProfileImage(HttpServletRequest request){
+
+        if(checkCookieUserId(request) == null) return MsgType.NO_COOKIE_FOUND;
+        String userLoginId = checkCookieUserId(request).getValue();
+        Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
+        if(user.getId() == null) return MsgType.USER_NOT_FOUND;
+        String fileName = "user_" + user.getId() + "_profile";
+        Path filePath = Path.of(uploadDirUserImg, fileName);
+
+        try{
+            Files.deleteIfExists(filePath);
+        }catch (IOException e){
+            return MsgType.NO_FILE_EXIST;
+        }
+
+         return MsgType.FILE_DELETE_COMPLETE;
+    }
+
     public Cookie checkCookieUserId(HttpServletRequest request){
         Cookie[] cookies = request.getCookies();
 
