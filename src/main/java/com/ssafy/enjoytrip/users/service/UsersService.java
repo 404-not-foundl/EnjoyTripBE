@@ -9,15 +9,22 @@ import com.ssafy.enjoytrip.users.dto.response.UserInfoDto;
 import com.ssafy.enjoytrip.users.entity.Users;
 import com.ssafy.enjoytrip.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.CookieGenerator;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -25,6 +32,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UsersService {
 
+    @Value("${upload.directory.userImage}")
+    private String uploadDirUserImg;
     private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
     private final UsersRepository usersRepository;
 
@@ -36,7 +45,9 @@ public class UsersService {
                 .userLoginId(requestDto.getUserLogId())
                 .userPassword(encodedPwd)
                 .userNickname(requestDto.getUserNick())
-                .userPasswordQuestion(requestDto.getUserPwdQue())
+                .userNationality(requestDto.getUserNation())
+                .userPhoneNumber(requestDto.getUserPhone())
+                .userEmail(requestDto.getUserEmail())
                 .build();
 
         usersRepository.save(user);
@@ -52,15 +63,15 @@ public class UsersService {
         return usersRepository.findByUserNicknameAndDeletedDateIsNull(requestDto.getDuplicate()).isPresent();
     }
 
-    public Boolean findPassword(FindPasswordRequestDto requestDto){
-        Optional<Users> usersOptional = usersRepository.findByUserLoginIdAndUserPasswordQuestionAndDeletedDateIsNull(requestDto.getUserLogId(), requestDto.getUserPwdQue());
-        if(usersOptional.isPresent()) {
-            Users user = usersOptional.get();
-            user.setUserPassword(passwordEncoder.encode(requestDto.getNewPassword()));
-            usersRepository.save(user);
-        }
-        return usersOptional.isPresent();
-    }
+//    public Boolean findPassword(FindPasswordRequestDto requestDto){
+//        Optional<Users> usersOptional = usersRepository.findByUserLoginIdAndUserPasswordQuestionAndDeletedDateIsNull(requestDto.getUserLogId(), requestDto.getUserPwdQue());
+//        if(usersOptional.isPresent()) {
+//            Users user = usersOptional.get();
+//            user.setUserPassword(passwordEncoder.encode(requestDto.getNewPassword()));
+//            usersRepository.save(user);
+//        }
+//        return usersOptional.isPresent();
+//    }
 
     public Boolean login(LoginRequestDto requestDto, HttpServletResponse response){
         Optional<Users> usersOptional = usersRepository.findByUserLoginIdAndDeletedDateIsNull(requestDto.getUserLogId());
@@ -68,15 +79,17 @@ public class UsersService {
             CookieGenerator cg = new CookieGenerator();
             cg.setCookieName("userId");
             cg.setCookieMaxAge(3600);
+            cg.setCookieHttpOnly(true);
             cg.addCookie(response, usersOptional.get().getUserLoginId());
             return true;
         }else return false;
     }
 
     public MsgType logout(HttpServletResponse response){
-        Cookie deleteCookie = new Cookie("userId", null);
-        deleteCookie.setMaxAge(0);
-        response.addCookie(deleteCookie);
+        CookieGenerator cg = new CookieGenerator();
+        cg.setCookieName("userId");
+        cg.setCookieMaxAge(0);
+        cg.addCookie(response, "");
         return MsgType.LOGOUT_SUCCESSFULLY;
     }
 
@@ -121,5 +134,37 @@ public class UsersService {
                 }
             }
         }
+    }
+
+    public MsgType profileImage(MultipartFile userImage, HttpServletRequest request){
+
+        if(userImage.isEmpty()) return MsgType.NO_IMAGE_SENT;
+        if(checkCookieUserId(request) == null) return MsgType.NO_COOKIE_FOUND;
+        String userLoginId = checkCookieUserId(request).getValue();
+        Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
+        if(user.getId() == null) return MsgType.USER_NOT_FOUND;
+        String fileName = "user_" + user.getId() + "_profile";
+        try{
+            Path filePath = Path.of(uploadDirUserImg, fileName);
+            Files.copy(userImage.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        }catch (IOException e){
+            return MsgType.FILE_UPLOAD_FAIL;
+        }
+
+        return MsgType.USER_IMAGE_UPLOAD_COMPLETE;
+    }
+
+    public Cookie checkCookieUserId(HttpServletRequest request){
+        Cookie[] cookies = request.getCookies();
+
+        if(cookies != null){
+            for(Cookie cookie : cookies){
+                if(cookie.getName().equals("userId")){
+                    return cookie;
+                }
+            }
+        }
+
+        return null;
     }
 }

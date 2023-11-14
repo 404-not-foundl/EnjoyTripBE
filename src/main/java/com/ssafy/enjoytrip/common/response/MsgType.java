@@ -17,11 +17,16 @@ public enum MsgType {
     USER_NOT_FOUND("유저가 존재하지 않습니다."),
     USER_NOT_MATCH("유저가 일치하지 않습니다."),
     NO_COOKIE_FOUND("쿠키가 존재하지 않습니다."),
+    USER_IMAGE_UPLOAD_COMPLETE("유저 이미지 업로드 완료"),
+    NO_IMAGE_SENT("이미지가 전달되지 않았습니다."),
     QNA_ARTICLE_SAVE_COMPLETE("Qna Article 저장 완료"),
     QNA_ARTICLE_UPDATE_COMPLETE("Qna Article 업데이트 완료"),
     QNA_ARTICLE_DELETE_COMPLETE("Qna Article 삭제 완료"),
     QNA_ARTICLE_DOES_NOT_EXIST("Qna Article이 존재하지 않습니다."),
-    TRAVEL_COURSE_LIST_SAVE_COMPLETE("여행 일정 저장 완료");
+    TRAVEL_COURSE_LIST_SAVE_COMPLETE("여행 일정 저장 완료"),
+    NO_FILE_EXIST("파일이 존재하지 않습니다."),
+    FILE_UPLOAD_FAIL("파일 업로드에 실패하였습니다");
+
 
 
     private final String msg;

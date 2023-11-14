@@ -13,6 +13,7 @@ import com.ssafy.enjoytrip.users.service.UsersService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,10 +40,10 @@ public class UsersController {
         return ResponseUtil.ok(usersService.checkNickname(requestDto));
     }
 
-    @PutMapping("/new-password")
-    public ApiResponseDto<Boolean> findPassword(@RequestBody FindPasswordRequestDto requestDto){
-        return ResponseUtil.ok(usersService.findPassword(requestDto));
-    }
+//    @PutMapping("/new-password")
+//    public ApiResponseDto<Boolean> findPassword(@RequestBody FindPasswordRequestDto requestDto){
+//        return ResponseUtil.ok(usersService.findPassword(requestDto));
+//    }
 
     @PostMapping("/login")
     public ApiResponseDto<Boolean> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response){
@@ -64,5 +65,10 @@ public class UsersController {
     public ApiResponseDto<Void> deleteUser(HttpServletRequest request){
         usersService.deleteUser(request);
         return ResponseUtil.ok(MsgType.USER_DELETED_COMPLETE);
+    }
+
+    @PostMapping("/image")
+    public ApiResponseDto<Void> image(@RequestParam("userImage")MultipartFile userImage, HttpServletRequest request){
+        return ResponseUtil.ok(usersService.profileImage(userImage, request));
     }
 }

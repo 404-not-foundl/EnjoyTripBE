@@ -9,13 +9,14 @@ public class JoinRequestDto {
 
     @NotBlank
     private String userLogId;
-
     @NotBlank
     private String userPwd;
-
     @NotBlank
     private String userNick;
-
     @NotBlank
-    private String userPwdQue;
+    private String userNation;
+    @NotBlank
+    private String userPhone;
+    @NotBlank
+    private String userEmail;
 }
