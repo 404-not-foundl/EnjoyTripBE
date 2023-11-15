@@ -3,10 +3,7 @@ package com.ssafy.enjoytrip.users.controller;
 import com.ssafy.enjoytrip.common.response.ApiResponseDto;
 import com.ssafy.enjoytrip.common.response.MsgType;
 import com.ssafy.enjoytrip.common.response.ResponseUtil;
-import com.ssafy.enjoytrip.users.dto.request.CheckDuplicateDto;
-import com.ssafy.enjoytrip.users.dto.request.FindPasswordRequestDto;
-import com.ssafy.enjoytrip.users.dto.request.JoinRequestDto;
-import com.ssafy.enjoytrip.users.dto.request.LoginRequestDto;
+import com.ssafy.enjoytrip.users.dto.request.*;
 import com.ssafy.enjoytrip.users.dto.response.FindPasswordResponsDto;
 import com.ssafy.enjoytrip.users.dto.response.UserInfoDto;
 import com.ssafy.enjoytrip.users.service.UsersService;
@@ -43,14 +40,14 @@ public class UsersController {
         return ResponseUtil.ok(usersService.checkNickname(requestDto));
     }
 
-//    @PutMapping("/new-password")
-//    public ApiResponseDto<Boolean> findPassword(@RequestBody FindPasswordRequestDto requestDto){
-//        return ResponseUtil.ok(usersService.findPassword(requestDto));
-//    }
+    @PutMapping("/new-password")
+    public ApiResponseDto<Void> changePassword(@RequestBody ChangePasswordRequestDto requestDto, HttpServletRequest request){
+        return ResponseUtil.ok(usersService.changePassword(requestDto, request));
+    }
 
     @PostMapping("/login")
-    public ApiResponseDto<Boolean> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response){
-        return ResponseUtil.ok(usersService.login(requestDto, response));
+    public ApiResponseDto<Boolean> login(@RequestBody LoginRequestDto requestDto, HttpServletRequest request, HttpServletResponse response){
+        return ResponseUtil.ok(usersService.login(requestDto, request, response));
     }
 
     @PostMapping("/logout")

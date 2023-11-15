@@ -12,6 +12,8 @@ public enum MsgType {
     CHECK_ID_NO_DUPLICATE("아이디 중복 없음"),
     CHECK_ID_YES_DUPLICATE("아이디 중복 있음"),
     NO_SUCH_USER("회원이 존재하지 않음"),
+    WRONG_USER("올바르지 않은 회원입니다."),
+    WRONG_PASSWORD("비밀번호가 옳지 않습니다."),
     PASSWORD_CHANGE_COMPLETE("비밀번호 변경 완료"),
     USER_DELETED_COMPLETE("계정삭제 완료"),
     USER_NOT_FOUND("유저가 존재하지 않습니다."),

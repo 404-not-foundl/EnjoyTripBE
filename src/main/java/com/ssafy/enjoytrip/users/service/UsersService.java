@@ -1,10 +1,7 @@
 package com.ssafy.enjoytrip.users.service;
 
 import com.ssafy.enjoytrip.common.response.MsgType;
-import com.ssafy.enjoytrip.users.dto.request.CheckDuplicateDto;
-import com.ssafy.enjoytrip.users.dto.request.FindPasswordRequestDto;
-import com.ssafy.enjoytrip.users.dto.request.JoinRequestDto;
-import com.ssafy.enjoytrip.users.dto.request.LoginRequestDto;
+import com.ssafy.enjoytrip.users.dto.request.*;
 import com.ssafy.enjoytrip.users.dto.response.UserInfoDto;
 import com.ssafy.enjoytrip.users.entity.Users;
 import com.ssafy.enjoytrip.users.repository.UsersRepository;
@@ -76,7 +73,8 @@ public class UsersService {
 //        return usersOptional.isPresent();
 //    }
 
-    public Boolean login(LoginRequestDto requestDto, HttpServletResponse response){
+    public Boolean login(LoginRequestDto requestDto,HttpServletRequest request, HttpServletResponse response){
+        if(checkCookieUserId(request) != null) return false;
         Optional<Users> usersOptional = usersRepository.findByUserLoginIdAndDeletedDateIsNull(requestDto.getUserLogId());
         if(usersOptional.isPresent() && passwordEncoder.matches(requestDto.getUserPwd(), usersOptional.get().getUserPassword())){
             CookieGenerator cg = new CookieGenerator();
@@ -142,6 +140,18 @@ public class UsersService {
         }
     }
 
+    public MsgType changePassword(ChangePasswordRequestDto requestDto, HttpServletRequest request){
+        if(checkCookieUserId(request) == null) return MsgType.NO_COOKIE_FOUND;
+        String userLoginId = checkCookieUserId(request).getValue();
+        Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(null);
+        if(user == null) return MsgType.USER_NOT_FOUND;
+        if(!user.getUserLoginId().equals(requestDto.getUserLogId())) return MsgType.WRONG_USER;
+        if(!passwordEncoder.matches(requestDto.getOriginalPassword(), user.getUserPassword())) return MsgType.WRONG_PASSWORD;
+        user.setUserPassword(passwordEncoder.encode(requestDto.getNewPassword()));
+        usersRepository.save(user);
+        return MsgType.PASSWORD_CHANGE_COMPLETE;
+    }
+
     public MsgType profileImage(MultipartFile userImage, HttpServletRequest request){
 
         if(userImage.isEmpty()) return MsgType.NO_IMAGE_SENT;
@@ -151,6 +161,7 @@ public class UsersService {
         if(user.getId() == null) return MsgType.USER_NOT_FOUND;
         String fileName = "user_" + user.getId() + "_profile";
         try{
+
             Path filePath = Path.of(uploadDirUserImg, fileName);
             Files.copy(userImage.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
             user.setUserProfileImage(fileName);
