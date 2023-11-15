@@ -14,7 +14,7 @@ import javax.persistence.*;
 public class ChildCommentLike {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long childCommentLikeId;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "child_comment_id")
