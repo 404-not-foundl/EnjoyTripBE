@@ -3,10 +3,7 @@ package com.ssafy.enjoytrip.board.entity;
 import com.ssafy.enjoytrip.common.entity.BaseTime;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Builder
 @Entity
@@ -21,6 +18,7 @@ public class BoardQnaArticle extends BaseTime {
 
     private String userNick;
     private String title;
+    @Lob
     private String content;
     private int hit;
 }
