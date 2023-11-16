@@ -1,7 +1,7 @@
 package com.ssafy.enjoytrip.board.repository;
 
-import com.ssafy.enjoytrip.board.entity.BoardQnaArticle;
-import com.ssafy.enjoytrip.board.entity.BoardQnaListArticleProjection;
+import com.ssafy.enjoytrip.board.entity.qna.BoardQnaArticle;
+import com.ssafy.enjoytrip.board.entity.qna.BoardQnaListArticleProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

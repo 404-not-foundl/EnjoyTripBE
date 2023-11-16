@@ -1,6 +1,6 @@
 package com.ssafy.enjoytrip.board.dto.response;
 
-import com.ssafy.enjoytrip.board.entity.BoardQnaListArticleProjection;
+import com.ssafy.enjoytrip.board.entity.qna.BoardQnaListArticleProjection;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

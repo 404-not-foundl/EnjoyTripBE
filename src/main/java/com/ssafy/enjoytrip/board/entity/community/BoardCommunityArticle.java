@@ -1,4 +1,4 @@
-package com.ssafy.enjoytrip.board.entity;
+package com.ssafy.enjoytrip.board.entity.community;
 
 import com.ssafy.enjoytrip.common.entity.BaseTime;
 import com.ssafy.enjoytrip.users.entity.Users;

@@ -1,4 +1,4 @@
-package com.ssafy.enjoytrip.board.entity;
+package com.ssafy.enjoytrip.board.entity.community;
 
 import com.ssafy.enjoytrip.users.entity.Users;
 import lombok.*;
@@ -11,14 +11,14 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ParentCommentLike {
+public class ChildCommentLike {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "parent_comment_id")
-    private ParentComment parentComment;
+    @JoinColumn(name = "child_comment_id")
+    private ChildComment childComment;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

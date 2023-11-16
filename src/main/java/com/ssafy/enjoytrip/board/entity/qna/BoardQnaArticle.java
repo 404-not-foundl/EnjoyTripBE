@@ -1,4 +1,4 @@
-package com.ssafy.enjoytrip.board.entity;
+package com.ssafy.enjoytrip.board.entity.qna;
 
 import com.ssafy.enjoytrip.common.entity.BaseTime;
 import lombok.*;

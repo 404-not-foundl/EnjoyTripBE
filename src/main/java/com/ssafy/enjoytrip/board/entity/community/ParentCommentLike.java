@@ -1,18 +1,17 @@
-package com.ssafy.enjoytrip.board.entity;
+package com.ssafy.enjoytrip.board.entity.community;
 
-import com.ssafy.enjoytrip.common.entity.BaseTime;
 import com.ssafy.enjoytrip.users.entity.Users;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChildComment extends BaseTime {
+public class ParentCommentLike {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,9 +23,4 @@ public class ChildComment extends BaseTime {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private Users user;
-
-    @OneToMany(mappedBy = "childComment", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ChildCommentLike> likes;
-
-    private String context;
 }
