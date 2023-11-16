@@ -18,7 +18,7 @@ public class ParentComment extends BaseTime {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "board_community_article_id", referencedColumnName = "boardCommunityArticleId")
+    @JoinColumn(name = "board_community_article_id")
     private BoardCommunityArticle boardCommunityArticle;
 
     @ManyToOne
