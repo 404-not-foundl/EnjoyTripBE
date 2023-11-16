@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
-public class BoardQnaService {
+public class  BoardQnaService {
 
     private final BoardQnaRepository boardQnaRepository;
     private final UsersRepository usersRepository;

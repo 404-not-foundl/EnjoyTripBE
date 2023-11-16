@@ -4,6 +4,8 @@ import com.ssafy.enjoytrip.common.address.DomainName;
 import com.ssafy.enjoytrip.common.address.image.ProfileImageDomain;
 import com.ssafy.enjoytrip.common.response.MsgType;
 import com.ssafy.enjoytrip.users.dto.request.*;
+import com.ssafy.enjoytrip.users.dto.response.CacheImageToProfileImageResponseDto;
+import com.ssafy.enjoytrip.users.dto.response.CacheImageUpdateResponseDto;
 import com.ssafy.enjoytrip.users.dto.response.UserInfoDto;
 import com.ssafy.enjoytrip.users.entity.Users;
 import com.ssafy.enjoytrip.users.repository.UsersRepository;
@@ -23,11 +25,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.time.LocalDateTime;
+import java.util.Iterator;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -36,7 +37,7 @@ public class UsersService {
 
     @Value("${upload.directory.userImage}")
     private String uploadDirUserImg;
-    @Value("${upload.directory.holdUserImage}")
+    @Value("${upload.directory.cacheUserImage}")
     private String uploadDirUserImgCache;
     private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
     private final UsersRepository usersRepository;
@@ -206,12 +207,13 @@ public class UsersService {
         }
     }
 
-    public boolean cacheImageChange(HttpServletRequest request){
+    public boolean clearCacheImage(HttpServletRequest request){
         if(checkCookieUserId(request) == null) return false;
         String userLoginId = checkCookieUserId(request).getValue();
         Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
         if(user.getId() == null) return false;
         String fileName = "user_" + user.getId() + "_profile";
+        if(user.getUserProfileImage() == null) return true;
         try{
             Path sourceFilePath = Path.of(uploadDirUserImg, fileName);
             Path destinationFilePath = Path.of(uploadDirUserImgCache, fileName);
@@ -223,7 +225,88 @@ public class UsersService {
         return true;
     }
 
-    public Cookie checkCookieUserId(HttpServletRequest request){
+    public CacheImageUpdateResponseDto changeCacheImage(MultipartFile userImage, HttpServletRequest request){
+        if(checkCookieUserId(request) != null){
+            String userLoginId = Objects.requireNonNull(checkCookieUserId(request)).getValue();
+            Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
+            if(user.getId() != null){
+                if(userImage == null){
+                    String fileNamePrefix = "user_" + user.getId() + "_profile";
+                    try{
+                        Path sourceFilePath = findFileWithPrefix(Path.of(uploadDirUserImgCache), fileNamePrefix);
+                        if(sourceFilePath != null)Files.deleteIfExists(sourceFilePath);
+                        return CacheImageUpdateResponseDto.builder().build();
+                    }catch (IOException e){
+                        return CacheImageUpdateResponseDto.builder().build();
+                    }
+                }
+                String fileName = "user_" + user.getId() + "_profile."+ Objects.requireNonNull(userImage.getOriginalFilename()).substring(userImage.getOriginalFilename().lastIndexOf(".") + 1);
+                try{
+                    Path filePath = Path.of(uploadDirUserImgCache, fileName);
+                    Files.copy(userImage.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+                    return CacheImageUpdateResponseDto.builder()
+                            .ImageUrl(DomainName.DOMAIN_NAME.getDomain()+ ProfileImageDomain.CACHE_DOMAIN.getDomain()+fileName)
+                            .build();
+                }catch (IOException e){
+                    return CacheImageUpdateResponseDto.builder().build();
+                }
+            }
+
+        }
+
+        return CacheImageUpdateResponseDto.builder().build();
+    }
+
+    public CacheImageToProfileImageResponseDto cacheImgToProfileImg(HttpServletRequest request) {
+        if (checkCookieUserId(request) != null) {
+            String userLoginId = checkCookieUserId(request).getValue();
+            Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
+            if (user.getId() != null) {
+                String fileNamePrefix = "user_" + user.getId() + "_profile";
+                try {
+                    Path sourceFilePath = findFileWithPrefix(Path.of(uploadDirUserImgCache), fileNamePrefix);
+
+                    if (sourceFilePath != null && Files.exists(sourceFilePath)) {
+                        String fileExtension = getFileExtension(sourceFilePath);
+
+                        if (fileExtension != null) {
+                            String fileName = fileNamePrefix + "." + fileExtension;
+
+                            Path destinationFilePath = Path.of(uploadDirUserImg, fileName);
+                            Files.copy(sourceFilePath, destinationFilePath, StandardCopyOption.REPLACE_EXISTING);
+                            String imageUrl = DomainName.DOMAIN_NAME.getDomain() + ProfileImageDomain.PROFILE_IMAGE_DOMAIN.getDomain() + fileName;
+                            user.setUserProfileImage(imageUrl);
+                            usersRepository.save(user);
+                            return CacheImageToProfileImageResponseDto.builder()
+                                    .ImageUrl(imageUrl)
+                                    .build();
+                        }
+                    } else {
+                        deleteProfileImage(fileNamePrefix);
+                    }
+
+                    return CacheImageToProfileImageResponseDto.builder().build();
+                } catch (IOException e) {
+                    return CacheImageToProfileImageResponseDto.builder().build();
+                }
+            }
+        }
+
+        return CacheImageToProfileImageResponseDto.builder().build();
+    }
+
+    private void deleteProfileImage(String fileNamePrefix) {
+        String fileName = fileNamePrefix + "." + getFileExtension(Path.of(uploadDirUserImg, fileNamePrefix));
+        Path profileFilePath = Path.of(uploadDirUserImg, fileName);
+
+        try {
+            Files.deleteIfExists(profileFilePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Cookie checkCookieUserId(HttpServletRequest request){
         Cookie[] cookies = request.getCookies();
 
         if(cookies != null){
@@ -235,5 +318,19 @@ public class UsersService {
         }
 
         return null;
+    }
+
+    private String getFileExtension(Path filePath) {
+        String fileName = filePath.getFileName().toString();
+        int lastDotIndex = fileName.lastIndexOf(".");
+
+        return lastDotIndex == -1 ? null : fileName.substring(lastDotIndex + 1);
+    }
+
+    private Path findFileWithPrefix(Path directory, String fileNamePrefix) throws IOException {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory, fileNamePrefix + "*")) {
+            Iterator<Path> iterator = stream.iterator();
+            return iterator.hasNext() ? iterator.next() : null;
+        }
     }
 }
