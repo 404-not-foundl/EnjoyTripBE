@@ -18,4 +18,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowCredentials(true);
     }
 
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/static/**")  // Add /uploadFile/**
+                .addResourceLocations("classpath:/static/");
+    }
+
 }
