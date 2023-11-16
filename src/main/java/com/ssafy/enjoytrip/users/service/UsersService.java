@@ -1,5 +1,7 @@
 package com.ssafy.enjoytrip.users.service;
 
+import com.ssafy.enjoytrip.common.address.DomainName;
+import com.ssafy.enjoytrip.common.address.image.ProfileImageDomain;
 import com.ssafy.enjoytrip.common.response.MsgType;
 import com.ssafy.enjoytrip.users.dto.request.*;
 import com.ssafy.enjoytrip.users.dto.response.UserInfoDto;
@@ -34,6 +36,8 @@ public class UsersService {
 
     @Value("${upload.directory.userImage}")
     private String uploadDirUserImg;
+    @Value("${upload.directory.holdUserImage}")
+    private String uploadDirUserImgCache;
     private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
     private final UsersRepository usersRepository;
 
@@ -104,13 +108,13 @@ public class UsersService {
                     userLoginId = cookie.getValue();
                     Optional<Users> optionalUsers = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId);
                     if(optionalUsers.isPresent()){
-                      return UserInfoDto.builder()
-                              .userLogId(optionalUsers.get().getUserLoginId())
-                              .userNick(optionalUsers.get().getUserNickname())
-                              .userNation(optionalUsers.get().getUserNationality())
-                              .userEmail(optionalUsers.get().getUserEmail())
-                              .userProfileImage(optionalUsers.get().getUserProfileImage())
-                              .build();
+                        return UserInfoDto.builder()
+                                .userLogId(optionalUsers.get().getUserLoginId())
+                                .userNick(optionalUsers.get().getUserNickname())
+                                .userNation(optionalUsers.get().getUserNationality())
+                                .userEmail(optionalUsers.get().getUserEmail())
+                                .userProfileImage(optionalUsers.get().getUserProfileImage())
+                                .build();
                     }
                     break;
                 }
@@ -161,10 +165,9 @@ public class UsersService {
         if(user.getId() == null) return MsgType.USER_NOT_FOUND;
         String fileName = "user_" + user.getId() + "_profile";
         try{
-
             Path filePath = Path.of(uploadDirUserImg, fileName);
             Files.copy(userImage.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            user.setUserProfileImage(fileName);
+            user.setUserProfileImage(DomainName.DOMAIN_NAME.getDomain()+ ProfileImageDomain.PROFILE_IMAGE_DOMAIN.getDomain()+fileName);
             usersRepository.save(user);
         }catch (IOException e){
             return MsgType.FILE_UPLOAD_FAIL;
@@ -201,6 +204,23 @@ public class UsersService {
         }catch (IOException e){
             return null;
         }
+    }
+
+    public boolean cacheImageChange(HttpServletRequest request){
+        if(checkCookieUserId(request) == null) return false;
+        String userLoginId = checkCookieUserId(request).getValue();
+        Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
+        if(user.getId() == null) return false;
+        String fileName = "user_" + user.getId() + "_profile";
+        try{
+            Path sourceFilePath = Path.of(uploadDirUserImg, fileName);
+            Path destinationFilePath = Path.of(uploadDirUserImgCache, fileName);
+            Files.copy(sourceFilePath, destinationFilePath, StandardCopyOption.REPLACE_EXISTING);
+        }catch (IOException e){
+            return false;
+        }
+
+        return true;
     }
 
     public Cookie checkCookieUserId(HttpServletRequest request){

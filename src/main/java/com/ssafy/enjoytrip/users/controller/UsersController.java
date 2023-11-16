@@ -77,8 +77,13 @@ public class UsersController {
         return ResponseUtil.ok(usersService.deleteProfileImage(request));
     }
 
-    @GetMapping("/image")
-    public ResponseEntity<Resource> showImage(@RequestParam("filename") String filename){
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(usersService.getImage(filename));
+//    @GetMapping("/image")
+//    public ResponseEntity<Resource> showImage(@RequestParam("filename") String filename){
+//        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(usersService.getImage(filename));
+//    }
+
+    @PostMapping("/cache-image")
+    public ApiResponseDto<Boolean> updateCacheImage(HttpServletRequest request){
+        return ResponseUtil.ok(usersService.cacheImageChange(request));
     }
 }
