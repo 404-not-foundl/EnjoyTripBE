@@ -116,6 +116,7 @@ public class UsersService {
                                 .userNick(optionalUsers.get().getUserNickname())
                                 .userNation(optionalUsers.get().getUserNationality())
                                 .userEmail(optionalUsers.get().getUserEmail())
+                                .userPhone(optionalUsers.get().getUserPhoneNumber())
                                 .userProfileImage(optionalUsers.get().getUserProfileImage())
                                 .build();
                     }

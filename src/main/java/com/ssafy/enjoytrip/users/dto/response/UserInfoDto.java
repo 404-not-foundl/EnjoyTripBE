@@ -13,5 +13,6 @@ public class UserInfoDto {
     private String userNick;
     private String userNation;
     private String userEmail;
+    private String userPhone;
     private String userProfileImage;
 }
