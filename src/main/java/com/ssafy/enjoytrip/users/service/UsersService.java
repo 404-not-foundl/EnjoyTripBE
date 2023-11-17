@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,7 @@ public class UsersService {
     private String uploadDirUserImgCache;
     private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
     private final UsersRepository usersRepository;
+    private final ResourceLoader resourceLoader;
 
     @Transactional
     public MsgType join(JoinRequestDto requestDto){
@@ -213,7 +215,17 @@ public class UsersService {
         Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
         if(user.getId() == null) return false;
         String fileName = "user_" + user.getId() + "_profile";
-        if(user.getUserProfileImage() == null) return true;
+        if(user.getUserProfileImage() == null) {
+            String extendedFileName = doesFileExist(uploadDirUserImgCache, fileName);
+            if(extendedFileName != null){
+                try {
+                    Files.deleteIfExists(Path.of(uploadDirUserImgCache, extendedFileName));
+                }catch (IOException e){
+                    return true;
+                }
+            }
+            return true;
+        }
         try{
             Path sourceFilePath = Path.of(uploadDirUserImg, fileName);
             Path destinationFilePath = Path.of(uploadDirUserImgCache, fileName);
@@ -230,28 +242,32 @@ public class UsersService {
             String userLoginId = Objects.requireNonNull(checkCookieUserId(request)).getValue();
             Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
             if(user.getId() != null){
-                if(userImage == null){
-                    String fileNamePrefix = "user_" + user.getId() + "_profile";
+                String fileName = doesFileExist(uploadDirUserImgCache, "user_" + user.getId() + "_profile");
+                if(fileName != null){
                     try{
-                        Path sourceFilePath = findFileWithPrefix(Path.of(uploadDirUserImgCache), fileNamePrefix);
-                        if(sourceFilePath != null)Files.deleteIfExists(sourceFilePath);
-                        return CacheImageUpdateResponseDto.builder().build();
+                        Files.deleteIfExists(Path.of(uploadDirUserImgCache, fileName));
                     }catch (IOException e){
-                        return CacheImageUpdateResponseDto.builder().build();
+                        e.printStackTrace();
                     }
                 }
-                String fileName = "user_" + user.getId() + "_profile."+ Objects.requireNonNull(userImage.getOriginalFilename()).substring(userImage.getOriginalFilename().lastIndexOf(".") + 1);
-                try{
-                    Path filePath = Path.of(uploadDirUserImgCache, fileName);
-                    Files.copy(userImage.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-                    return CacheImageUpdateResponseDto.builder()
-                            .ImageUrl(DomainName.DOMAIN_NAME.getDomain()+ ProfileImageDomain.CACHE_DOMAIN.getDomain()+fileName)
-                            .build();
-                }catch (IOException e){
+                if(userImage == null){
                     return CacheImageUpdateResponseDto.builder().build();
                 }
+                fileName = "user_" + user.getId() + "_profile."+ Objects.requireNonNull(userImage.getOriginalFilename()).substring(userImage.getOriginalFilename().lastIndexOf(".") + 1);
+                Path filePath = Path.of(uploadDirUserImgCache, fileName);
+                try{
+                    Files.createDirectories(filePath.getParent());
+                    Files.copy(userImage.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+                    String imageUrl = DomainName.DOMAIN_NAME.getDomain()+ ProfileImageDomain.CACHE_DOMAIN.getDomain()+fileName;
+                    user.setUserProfileImage(imageUrl);
+                    usersRepository.save(user);
+                    return CacheImageUpdateResponseDto.builder()
+                            .ImageUrl(imageUrl)
+                            .build();
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
             }
-
         }
 
         return CacheImageUpdateResponseDto.builder().build();
@@ -262,32 +278,33 @@ public class UsersService {
             String userLoginId = checkCookieUserId(request).getValue();
             Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
             if (user.getId() != null) {
-                String fileNamePrefix = "user_" + user.getId() + "_profile";
-                try {
-                    Path sourceFilePath = findFileWithPrefix(Path.of(uploadDirUserImgCache), fileNamePrefix);
-
-                    if (sourceFilePath != null && Files.exists(sourceFilePath)) {
-                        String fileExtension = getFileExtension(sourceFilePath);
-
-                        if (fileExtension != null) {
-                            String fileName = fileNamePrefix + "." + fileExtension;
-
-                            Path destinationFilePath = Path.of(uploadDirUserImg, fileName);
-                            Files.copy(sourceFilePath, destinationFilePath, StandardCopyOption.REPLACE_EXISTING);
-                            String imageUrl = DomainName.DOMAIN_NAME.getDomain() + ProfileImageDomain.PROFILE_IMAGE_DOMAIN.getDomain() + fileName;
-                            user.setUserProfileImage(imageUrl);
-                            usersRepository.save(user);
-                            return CacheImageToProfileImageResponseDto.builder()
-                                    .ImageUrl(imageUrl)
-                                    .build();
-                        }
-                    } else {
-                        deleteProfileImage(fileNamePrefix);
+                String destinationFileName = doesFileExist(uploadDirUserImg, "user_" + user.getId() + "_profile");
+                if(destinationFileName != null){
+                    try{
+                        Files.deleteIfExists(Path.of(uploadDirUserImg, destinationFileName));
+                        user.setUserProfileImage(null);
+                    }catch (IOException e){
+                        e.printStackTrace();
                     }
-
+                }
+                String sourceFileName = doesFileExist(uploadDirUserImgCache, "user_" + user.getId() + "_profile");
+                if(sourceFileName == null){
+                    usersRepository.save(user);
                     return CacheImageToProfileImageResponseDto.builder().build();
-                } catch (IOException e) {
-                    return CacheImageToProfileImageResponseDto.builder().build();
+                }
+                Path destinationPath = Path.of(uploadDirUserImg, sourceFileName);
+                Path sourcePath = Path.of(uploadDirUserImgCache, sourceFileName);
+                try{
+                    Files.createDirectories(destinationPath.getParent());
+                    Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+                    String imageUrl = DomainName.DOMAIN_NAME.getDomain()+ ProfileImageDomain.PROFILE_IMAGE_DOMAIN.getDomain()+sourceFileName;
+                    user.setUserProfileImage(imageUrl);
+                    usersRepository.save(user);
+                    return CacheImageToProfileImageResponseDto.builder()
+                            .ImageUrl(imageUrl)
+                            .build();
+                }catch (IOException e){
+                    e.printStackTrace();
                 }
             }
         }
@@ -331,6 +348,22 @@ public class UsersService {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory, fileNamePrefix + "*")) {
             Iterator<Path> iterator = stream.iterator();
             return iterator.hasNext() ? iterator.next() : null;
+        }
+    }
+
+    private String doesFileExist(String filePath, String fileName){
+        try {
+            String[] commonExtensions = {".jpeg", ".jpg", ".png"};
+            for(String extension : commonExtensions){
+                String extendedFilePath = filePath + "/" + fileName + extension;
+                Resource resource = resourceLoader.getResource(extendedFilePath);
+                if (resource.exists()) {
+                    return fileName + extension;
+                }
+            }
+            return null;
+        }catch (Exception e) {
+            return null;
         }
     }
 }
