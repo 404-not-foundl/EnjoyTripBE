@@ -32,11 +32,17 @@ public enum MsgType {
     QNA_ARTICLE_DOES_NOT_EXIST("Qna Article이 존재하지 않습니다."),
     TRAVEL_COURSE_LIST_SAVE_COMPLETE("여행 일정 저장 완료"),
 
+    // TRAVEL COURSE
+    TRAVEL_COURSE_SAVE_COMPLETE("여행 일정 저장 완료"),
+    NO_SUCH_TRAVEL_COURSE("해당 여행 일정이 존재하지 않습니다."),
+    TRAVEL_COURSE_INFO_SEND_COMPLETE("여행 일정 전송이 완료 되었습니다."),
+    TRAVEL_COURSE_UPDATE_COMPLETE("여행 일정 업데이트 완료."),
+    TRAVEL_COURSE_DELETE_COMPLETE("여행 일정 삭제 완료"),
+
     // FILES
     NO_FILE_EXIST("파일이 존재하지 않습니다."),
     FILE_UPLOAD_FAIL("파일 업로드에 실패하였습니다."),
     FILE_DELETE_COMPLETE("파일 삭제를 완료하였습니다.");
-
 
 
     private final String msg;
