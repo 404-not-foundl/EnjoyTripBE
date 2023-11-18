@@ -228,8 +228,9 @@ public class UsersService {
             return true;
         }
         try{
-            Path sourceFilePath = Path.of(uploadDirUserImg, fileName);
-            Path destinationFilePath = Path.of(uploadDirUserImgCache, fileName);
+            String extendedFileName = doesFileExist(uploadDirUserImg, fileName);
+            Path sourceFilePath = Path.of(uploadDirUserImg, extendedFileName);
+            Path destinationFilePath = Path.of(uploadDirUserImgCache, extendedFileName);
             Files.copy(sourceFilePath, destinationFilePath, StandardCopyOption.REPLACE_EXISTING);
         }catch (IOException e){
             return false;
