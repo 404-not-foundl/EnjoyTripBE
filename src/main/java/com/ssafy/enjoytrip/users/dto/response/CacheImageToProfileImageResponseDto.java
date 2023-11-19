@@ -7,5 +7,5 @@ import lombok.Setter;
 @Getter@Setter
 @Builder
 public class CacheImageToProfileImageResponseDto {
-    private String ImageUrl;
+    private String imageUrl;
 }

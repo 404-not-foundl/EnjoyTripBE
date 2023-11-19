@@ -217,7 +217,7 @@ public class UsersService {
         if(user.getId() == null) return false;
         String fileName = "user_" + user.getId() + "_profile";
         if(user.getUserProfileImage() == null) {
-            String extendedFileName = doesFileExist(uploadDirUserImgCache, fileName);
+            String extendedFileName = doesFileExist("classpath:/static/uploadFile/userProfile/cache", fileName);
             if(extendedFileName != null){
                 try {
                     Files.deleteIfExists(Path.of(uploadDirUserImgCache, extendedFileName));
@@ -228,7 +228,7 @@ public class UsersService {
             return true;
         }
         try{
-            String extendedFileName = doesFileExist(uploadDirUserImg, fileName);
+            String extendedFileName = doesFileExist("classpath:/static/uploadFile/userProfile", fileName);
             Path sourceFilePath = Path.of(uploadDirUserImg, extendedFileName);
             Path destinationFilePath = Path.of(uploadDirUserImgCache, extendedFileName);
             Files.copy(sourceFilePath, destinationFilePath, StandardCopyOption.REPLACE_EXISTING);
@@ -244,7 +244,7 @@ public class UsersService {
             String userLoginId = Objects.requireNonNull(checkCookieUserId(request)).getValue();
             Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
             if(user.getId() != null){
-                String fileName = doesFileExist(uploadDirUserImgCache, "user_" + user.getId() + "_profile");
+                String fileName = doesFileExist("classpath:/static/uploadFile/userProfile/cache", "user_" + user.getId() + "_profile");
                 if(fileName != null){
                     try{
                         Files.deleteIfExists(Path.of(uploadDirUserImgCache, fileName));
@@ -280,22 +280,37 @@ public class UsersService {
             String userLoginId = checkCookieUserId(request).getValue();
             Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
             if (user.getId() != null) {
-                String destinationFileName = doesFileExist(uploadDirUserImg, "user_" + user.getId() + "_profile");
+                String fileName = "user_" + user.getId() + "_profile";
+                // Cache x profile x -> no change
+                String sourceFileName = doesFileExist("classpath:/static/uploadFile/userProfile/cache", fileName);
+                String destinationFileName = doesFileExist("classpath:/static/uploadFile/userProfile", fileName);
+                if(sourceFileName == null){
+                    // Cache x profile o
+                    if(user.getUserProfileImage() != null){
+                        try{
+                            Files.deleteIfExists(Path.of(uploadDirUserImg, destinationFileName));
+                            user.setUserProfileImage(null);
+                            usersRepository.save(user);
+                        }catch (IOException e){
+                            e.printStackTrace();
+                            System.out.println("Cache x profile o ERROR");
+                            return CacheImageToProfileImageResponseDto.builder().build();
+                        }
+                    }
+                    return CacheImageToProfileImageResponseDto.builder().build();
+                }
                 if(destinationFileName != null){
                     try{
                         Files.deleteIfExists(Path.of(uploadDirUserImg, destinationFileName));
-                        user.setUserProfileImage(null);
                     }catch (IOException e){
                         e.printStackTrace();
+                        System.out.println("Cache o profile o ERROR");
+                        return CacheImageToProfileImageResponseDto.builder().build();
                     }
-                }
-                String sourceFileName = doesFileExist(uploadDirUserImgCache, "user_" + user.getId() + "_profile");
-                if(sourceFileName == null){
-                    usersRepository.save(user);
-                    return CacheImageToProfileImageResponseDto.builder().build();
                 }
                 Path destinationPath = Path.of(uploadDirUserImg, sourceFileName);
                 Path sourcePath = Path.of(uploadDirUserImgCache, sourceFileName);
+                System.out.println(sourceFileName);
                 try{
                     Files.createDirectories(destinationPath.getParent());
                     Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
@@ -303,7 +318,7 @@ public class UsersService {
                     user.setUserProfileImage(imageUrl);
                     usersRepository.save(user);
                     return CacheImageToProfileImageResponseDto.builder()
-                            .ImageUrl(imageUrl)
+                            .imageUrl(imageUrl)
                             .build();
                 }catch (IOException e){
                     e.printStackTrace();
@@ -356,15 +371,18 @@ public class UsersService {
     private String doesFileExist(String filePath, String fileName){
         try {
             String[] commonExtensions = {".jpeg", ".jpg", ".png"};
-            for(String extension : commonExtensions){
+            System.out.println("Checking files");
+            for (String extension : commonExtensions) {
                 String extendedFilePath = filePath + "/" + fileName + extension;
+                System.out.println("extendedFilePath = " + extendedFilePath);
                 Resource resource = resourceLoader.getResource(extendedFilePath);
                 if (resource.exists()) {
                     return fileName + extension;
                 }
             }
+            System.out.println("none");
             return null;
-        }catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }
