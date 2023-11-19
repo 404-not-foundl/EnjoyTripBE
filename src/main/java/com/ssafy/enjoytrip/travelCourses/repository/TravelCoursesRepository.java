@@ -10,6 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface TravelCoursesRepository extends JpaRepository<TravelCourses, Long> {
-    List<TravelCourses> findAllByTravelMembersUser_IdAAndDeletedDateIsNotNull(Long userId);
+    List<TravelCourses> findAllByTravelMembersUser_IdAndDeletedDateIsNotNull(Long userId);
     Optional<TravelCourses> findTravelCoursesByIdAndDeletedDateIsNotNull(Long id);
 }

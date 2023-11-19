@@ -103,7 +103,7 @@ public class TravelCoursesService {
         }
         Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
         if(user.getId() != null){
-            List<TravelCourses> travelCoursesList = travelCoursesRepository.findAllByTravelMembersUser_IdAAndDeletedDateIsNotNull(user.getId());
+            List<TravelCourses> travelCoursesList = travelCoursesRepository.findAllByTravelMembersUser_IdAndDeletedDateIsNotNull(user.getId());
             return ServiceControllerDataDto.builder()
                     .data(travelCoursesList)
                     .build();
