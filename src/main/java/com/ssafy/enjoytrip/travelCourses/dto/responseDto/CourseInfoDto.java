@@ -10,5 +10,7 @@ public class CourseInfoDto {
     private String category;
     private String address;
     private String memo;
-    private String image;
+    private String img;
+    private String lat;
+    private String lng;
 }

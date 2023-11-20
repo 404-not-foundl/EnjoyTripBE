@@ -24,6 +24,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -47,17 +48,28 @@ public class TravelCoursesService {
         }
         Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
         if(user.getId() != null){
+            TravelCourses travelCourses = TravelCourses.builder()
+                    .user(user)
+                    .travelTitle(requestDto.getTitle())
+                    .startDate(requestDto.getStartDate())
+                    .endDate(requestDto.getEndDate())
+                    .travelDays(requestDto.getTotalDays())
+                    .build();
+
             List<TravelCourseSchedule> scheduleList = new ArrayList<>();
-            for(int i = 0; i < requestDto.getTotalDays(); i++){
-                for(int j = 0; j < requestDto.getCourseInfo().size(); i++){
+            for(int i = 0; i < requestDto.getCourseInfo().size(); i++){
+                for(int j = 0; j < requestDto.getCourseInfo().get(i).size(); j++){
                     TravelCourseSchedule schedule = TravelCourseSchedule.builder()
+                            .travelCourse(travelCourses)
                             .name(requestDto.getCourseInfo().get(i).get(j).getName())
                             .category(requestDto.getCourseInfo().get(i).get(j).getCategory())
                             .address(requestDto.getCourseInfo().get(i).get(j).getAddress())
                             .memo(requestDto.getCourseInfo().get(i).get(j).getMemo())
-                            .image(requestDto.getCourseInfo().get(i).get(j).getImage())
-                            .index(j)
+                            .image(requestDto.getCourseInfo().get(i).get(j).getImg())
+                            .idx(j)
                             .day(i)
+                            .latitude(requestDto.getCourseInfo().get(i).get(j).getLat())
+                            .longitude(requestDto.getCourseInfo().get(i).get(j).getLng())
                             .build();
                     scheduleList.add(schedule);
                 }
@@ -65,19 +77,13 @@ public class TravelCoursesService {
 
             List<TravelMembers> travelMembersList = new ArrayList<>();
             TravelMembers travelMembers = TravelMembers.builder()
+                    .travelCourse(travelCourses)
                     .user(user)
                     .build();
             travelMembersList.add(travelMembers);
 
-            TravelCourses travelCourses = TravelCourses.builder()
-                    .user(user)
-                    .travelTitle(requestDto.getTitle())
-                    .startDate(requestDto.getStartDate())
-                    .endDate(requestDto.getEndDate())
-                    .travelDays(requestDto.getTotalDays())
-                    .travelCourseSchedules(scheduleList)
-                    .travelMembers(travelMembersList)
-                    .build();
+            travelCourses.setTravelCourseSchedules(scheduleList);
+            travelCourses.setTravelMembers(travelMembersList);
 
             travelCoursesRepository.save(travelCourses);
 
@@ -97,15 +103,16 @@ public class TravelCoursesService {
         String userLoginId = checkCookieUserId(request).getValue();
         if(userLoginId == null){
             return ServiceControllerDataDto.builder()
-                    .data(false)
+                    .data(null)
                     .msg(MsgType.NO_COOKIE_FOUND)
                     .build();
         }
         Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
         if(user.getId() != null){
-            List<TravelCourses> travelCoursesList = travelCoursesRepository.findAllByTravelMembersUser_IdAndDeletedDateIsNotNull(user.getId());
+            List<TravelCourses> travelCoursesList = travelCoursesRepository.findByUserWithDetails(user);
             return ServiceControllerDataDto.builder()
                     .data(travelCoursesList)
+                    .msg(MsgType.TRAVEL_COURSE_LIST_COMPLETE)
                     .build();
         }
 
@@ -125,7 +132,7 @@ public class TravelCoursesService {
         }
         Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
         if(user.getId() != null){
-            TravelCourses travelCourses = travelCoursesRepository.findTravelCoursesByIdAndDeletedDateIsNotNull(requestDto.getTravelCourseId()).orElse(null);
+            TravelCourses travelCourses = travelCoursesRepository.findTravelCoursesByIdAndDeletedDateIsNull(requestDto.getTravelCourseId()).orElse(null);
             if(travelCourses == null){
                 return ServiceControllerDataDto.builder()
                         .data(false)
@@ -133,29 +140,25 @@ public class TravelCoursesService {
                         .build();
             }
 
+
             List<TravelCourseSchedule> schedules = travelCourses.getTravelCourseSchedules();
 
-            // Organize schedules by day and index
             Map<Integer, List<TravelCourseSchedule>> dayScheduleMap = schedules.stream()
                     .collect(Collectors.groupingBy(TravelCourseSchedule::getDay));
 
-            // Sort each day's schedules by index
             dayScheduleMap.forEach((day, daySchedules) ->
-                    daySchedules.sort((schedule1, schedule2) -> Integer.compare(schedule1.getIndex(), schedule2.getIndex())));
+                    daySchedules.sort(Comparator.comparingInt(TravelCourseSchedule::getIdx)));
 
-            // Sort the map by day
-            List<List<TravelCourseSchedule>> orderedLists = dayScheduleMap.entrySet().stream()
-                    .sorted(Map.Entry.comparingByKey())
-                    .map(Map.Entry::getValue)
-                    .collect(Collectors.toList());
+            List<List<CourseInfoDto>> finalSchedule = new ArrayList<>();
 
-            // Convert TravelCourseSchedule entities to CourseInfoDto
-            List<List<CourseInfoDto>> orderedCourseInfo = orderedLists.stream()
-                    .map(daySchedules ->
-                            daySchedules.stream()
-                                    .map(this::convertToCourseInfoDto)
-                                    .collect(Collectors.toList()))
-                    .collect(Collectors.toList());
+            for (int day = 0; day < travelCourses.getTravelDays(); day++) {
+                List<TravelCourseSchedule> daySchedules = dayScheduleMap.getOrDefault(day, new ArrayList<>());
+                daySchedules.sort(Comparator.comparingInt(TravelCourseSchedule::getIdx));
+                List<CourseInfoDto> courseInfoList = daySchedules.stream()
+                        .map(this::convertToCourseInfoDto)
+                        .collect(Collectors.toList());
+                finalSchedule.add(courseInfoList);
+            }
 
             TravelCourseInfoResponseDto responseDto = TravelCourseInfoResponseDto.builder()
                     .travelCourseId(travelCourses.getId())
@@ -163,7 +166,7 @@ public class TravelCoursesService {
                     .startDate(travelCourses.getStartDate())
                     .endDate(travelCourses.getEndDate())
                     .totalDays(travelCourses.getTravelDays())
-                    .coursesInfo(orderedCourseInfo)
+                    .coursesInfo(finalSchedule)
                     .build();
 
             return ServiceControllerDataDto.builder()
@@ -188,7 +191,7 @@ public class TravelCoursesService {
         }
         Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
         if(user.getId() != null){
-            TravelCourses travelCourses = travelCoursesRepository.findTravelCoursesByIdAndDeletedDateIsNotNull(requestDto.getTravelCourseId()).orElse(null);
+            TravelCourses travelCourses = travelCoursesRepository.findTravelCoursesByIdAndDeletedDateIsNull(requestDto.getTravelCourseId()).orElse(null);
             if(travelCourses == null){
                 return ServiceControllerDataDto.builder()
                         .data(false)
@@ -198,15 +201,17 @@ public class TravelCoursesService {
 
             List<TravelCourseSchedule> scheduleList = new ArrayList<>();
             for(int i = 0; i < requestDto.getTotalDays(); i++){
-                for(int j = 0; j < requestDto.getCourseInfo().size(); i++){
+                for(int j = 0; j < requestDto.getCourseInfo().size(); j++){
                     TravelCourseSchedule schedule = TravelCourseSchedule.builder()
                             .name(requestDto.getCourseInfo().get(i).get(j).getName())
                             .category(requestDto.getCourseInfo().get(i).get(j).getCategory())
                             .address(requestDto.getCourseInfo().get(i).get(j).getAddress())
                             .memo(requestDto.getCourseInfo().get(i).get(j).getMemo())
-                            .image(requestDto.getCourseInfo().get(i).get(j).getImage())
-                            .index(j)
+                            .image(requestDto.getCourseInfo().get(i).get(j).getImg())
+                            .idx(j)
                             .day(i)
+                            .latitude(requestDto.getCourseInfo().get(i).get(j).getLat())
+                            .longitude(requestDto.getCourseInfo().get(i).get(j).getLng())
                             .build();
                     scheduleList.add(schedule);
                 }
@@ -237,7 +242,7 @@ public class TravelCoursesService {
         }
         Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
         if(user.getId() != null){
-            TravelCourses travelCourses = travelCoursesRepository.findTravelCoursesByIdAndDeletedDateIsNotNull(requestDto.getTravelCourseId()).orElse(null);
+            TravelCourses travelCourses = travelCoursesRepository.findTravelCoursesByIdAndDeletedDateIsNull(requestDto.getTravelCourseId()).orElse(null);
             if(travelCourses == null){
                 return ServiceControllerDataDto.builder()
                         .data(false)
@@ -280,7 +285,9 @@ public class TravelCoursesService {
                 .category(schedule.getCategory())
                 .address(schedule.getAddress())
                 .memo(schedule.getMemo())
-                .image(schedule.getImage())
+                .img(schedule.getImage())
+                .lat(String.valueOf(schedule.getLatitude()))
+                .lng(String.valueOf(schedule.getLongitude()))
                 .build();
     }
 }

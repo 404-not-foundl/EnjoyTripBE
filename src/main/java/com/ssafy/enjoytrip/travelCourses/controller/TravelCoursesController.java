@@ -27,25 +27,25 @@ public class TravelCoursesController {
     }
 
     @PostMapping("/course")
-    public ApiResponseDto<Object> courseSave(TravelCourseSaveRequestDto requestDto, HttpServletRequest request){
+    public ApiResponseDto<Object> courseSave(@RequestBody TravelCourseSaveRequestDto requestDto, HttpServletRequest request){
         ServiceControllerDataDto<Object> apiResponseDto = travelCoursesService.courseSave(requestDto, request);
         return ResponseUtil.ok(apiResponseDto.getData(), apiResponseDto.getMsg());
     }
 
     @GetMapping("/course")
-    public ApiResponseDto<Object> courseInfo(TravelCourseInfoRequestDto requestDto, HttpServletRequest request){
+    public ApiResponseDto<Object> courseInfo(@RequestBody TravelCourseInfoRequestDto requestDto, HttpServletRequest request){
         ServiceControllerDataDto<Object> apiResponseDto = travelCoursesService.courseInfo(requestDto, request);
         return ResponseUtil.ok(apiResponseDto.getData(), apiResponseDto.getMsg());
     }
 
     @PutMapping("/course")
-    public ApiResponseDto<Object> courseUpdate(TravelCourseUpdateRequestDto requestDto, HttpServletRequest request){
+    public ApiResponseDto<Object> courseUpdate(@RequestBody TravelCourseUpdateRequestDto requestDto, HttpServletRequest request){
         ServiceControllerDataDto<Object> apiResponseDto = travelCoursesService.courseUpdate(requestDto, request);
         return ResponseUtil.ok(apiResponseDto.getData(), apiResponseDto.getMsg());
     }
 
     @DeleteMapping("/course")
-    public ApiResponseDto<Object> courseDelete(TravelCourseDeleteRequestDto requestDto, HttpServletRequest request){
+    public ApiResponseDto<Object> courseDelete(@RequestBody TravelCourseDeleteRequestDto requestDto, HttpServletRequest request){
         ServiceControllerDataDto<Object> apiResponseDto = travelCoursesService.courseDelete(requestDto, request);
         return ResponseUtil.ok(apiResponseDto.getData(), apiResponseDto.getMsg());
     }

@@ -38,6 +38,7 @@ public enum MsgType {
     TRAVEL_COURSE_INFO_SEND_COMPLETE("여행 일정 전송이 완료 되었습니다."),
     TRAVEL_COURSE_UPDATE_COMPLETE("여행 일정 업데이트 완료."),
     TRAVEL_COURSE_DELETE_COMPLETE("여행 일정 삭제 완료"),
+    TRAVEL_COURSE_LIST_COMPLETE("여행 일정 목록 전송 완료"),
 
     // FILES
     NO_FILE_EXIST("파일이 존재하지 않습니다."),

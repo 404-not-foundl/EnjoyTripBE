@@ -3,19 +3,23 @@ package com.ssafy.enjoytrip.travelCourses.entity;
 import com.ssafy.enjoytrip.common.entity.BaseTime;
 import com.ssafy.enjoytrip.users.entity.Users;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
-@Builder
 @Entity
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class TravelCourses extends BaseTime {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -28,9 +32,10 @@ public class TravelCourses extends BaseTime {
     private int travelDays;
 
     @OneToMany(mappedBy = "travelCourse", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<TravelMembers> travelMembers;
+    List<TravelMembers> travelMembers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "travelCourse", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<TravelCourseSchedule> travelCourseSchedules;
+    @OneToMany(mappedBy = "travelCourse", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    List<TravelCourseSchedule> travelCourseSchedules = new ArrayList<>();
 
 }
+

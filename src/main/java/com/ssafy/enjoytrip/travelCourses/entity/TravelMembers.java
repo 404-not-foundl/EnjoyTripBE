@@ -17,7 +17,7 @@ public class TravelMembers {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "travel_courses_id")
+    @JoinColumn(name = "travel_courses_id")  // Corrected to match the column name in TravelCourses
     private TravelCourses travelCourse;
 
     @ManyToOne

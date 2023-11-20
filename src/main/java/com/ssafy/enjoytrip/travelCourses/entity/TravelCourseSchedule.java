@@ -3,6 +3,7 @@ package com.ssafy.enjoytrip.travelCourses.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Builder
 @Entity
@@ -24,6 +25,8 @@ public class TravelCourseSchedule {
     private String address;
     private String memo;
     private String image;
-    private int index;
+    private int idx;
     private int day;
+    private double latitude;
+    private double longitude;
 }

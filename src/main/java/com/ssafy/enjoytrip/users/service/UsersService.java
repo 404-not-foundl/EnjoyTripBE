@@ -128,7 +128,7 @@ public class UsersService {
         return null;
     }
 
-    public void deleteUser(HttpServletRequest request){
+    public void deleteUser(String userLogId, HttpServletRequest request){
         Cookie[] cookies = request.getCookies();
         String userLoginId;
 

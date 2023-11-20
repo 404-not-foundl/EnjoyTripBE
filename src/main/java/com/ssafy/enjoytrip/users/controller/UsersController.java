@@ -64,8 +64,8 @@ public class UsersController {
     }
 
     @DeleteMapping("/user")
-    public ApiResponseDto<Void> deleteUser(HttpServletRequest request){
-        usersService.deleteUser(request);
+    public ApiResponseDto<Void> deleteUser(@RequestParam("userLogId")String userLogId, HttpServletRequest request){
+        usersService.deleteUser(userLogId, request);
         return ResponseUtil.ok(MsgType.USER_DELETED_COMPLETE);
     }
 
