@@ -40,6 +40,13 @@ public enum MsgType {
     TRAVEL_COURSE_DELETE_COMPLETE("여행 일정 삭제 완료"),
     TRAVEL_COURSE_LIST_COMPLETE("여행 일정 목록 전송 완료"),
 
+    // TRAVEL LIKE
+    TRAVEL_LIKE_SAVE_COMPLETE("좋아요 저장 완료"),
+    TRAVEL_LIKE_SAVE_FAIL("이미 좋아요를 누른 여행지입니다."),
+    TRAVEL_LIKE_LIST_SENT("좋아요 리스트 전송 완료"),
+    TRAVEL_LIKE_NOT_FOUND("좋아요를 찾지 못하였습니다."),
+    TRAVEL_LIKE_DELETE_COMPLETE("좋아요 삭제 완료"),
+
     // FILES
     NO_FILE_EXIST("파일이 존재하지 않습니다."),
     FILE_UPLOAD_FAIL("파일 업로드에 실패하였습니다."),

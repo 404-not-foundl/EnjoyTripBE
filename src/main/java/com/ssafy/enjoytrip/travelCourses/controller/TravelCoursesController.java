@@ -6,7 +6,9 @@ import com.ssafy.enjoytrip.common.response.ServiceControllerDataDto;
 import com.ssafy.enjoytrip.travelCourses.dto.requestDto.TravelCourse.TravelCourseInfoRequestDto;
 import com.ssafy.enjoytrip.travelCourses.dto.requestDto.TravelCourse.TravelCourseSaveRequestDto;
 import com.ssafy.enjoytrip.travelCourses.dto.requestDto.TravelCourse.TravelCourseUpdateRequestDto;
+import com.ssafy.enjoytrip.travelCourses.dto.requestDto.TravelLike.TravelLikeSaveRequestDto;
 import com.ssafy.enjoytrip.travelCourses.service.TravelCoursesService;
+import com.ssafy.enjoytrip.travelCourses.service.TravelLikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 public class TravelCoursesController {
 
     private final TravelCoursesService travelCoursesService;
+    private final TravelLikeService travelLikeService;
 
     @GetMapping("/")
     public ApiResponseDto<Object> coursesList(HttpServletRequest request){
@@ -46,6 +49,24 @@ public class TravelCoursesController {
     @DeleteMapping("/course")
     public ApiResponseDto<Object> courseDelete(@RequestParam("travelCourseId") Long travelCourseId, HttpServletRequest request){
         ServiceControllerDataDto<Object> apiResponseDto = travelCoursesService.courseDelete(travelCourseId, request);
+        return ResponseUtil.ok(apiResponseDto.getData(), apiResponseDto.getMsg());
+    }
+
+    @PostMapping("/like")
+    public ApiResponseDto<Object> likePost(@RequestBody TravelLikeSaveRequestDto requestDto, HttpServletRequest request){
+        ServiceControllerDataDto<Object> apiResponseDto = travelLikeService.likeSave(requestDto, request);
+        return ResponseUtil.ok(apiResponseDto.getData(), apiResponseDto.getMsg());
+    }
+
+    @GetMapping("/like")
+    public ApiResponseDto<Object> likeList(HttpServletRequest request){
+        ServiceControllerDataDto<Object> apiResponseDto = travelLikeService.likeList(request);
+        return ResponseUtil.ok(apiResponseDto.getData(), apiResponseDto.getMsg());
+    }
+
+    @DeleteMapping("/like")
+    public ApiResponseDto<Object> likeDelete(@RequestParam("likeId") Long likeId, HttpServletRequest request){
+        ServiceControllerDataDto<Object> apiResponseDto = travelLikeService.likeDelete(likeId, request);
         return ResponseUtil.ok(apiResponseDto.getData(), apiResponseDto.getMsg());
     }
 }
