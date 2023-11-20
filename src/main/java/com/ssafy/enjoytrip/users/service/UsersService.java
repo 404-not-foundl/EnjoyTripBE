@@ -368,7 +368,7 @@ public class UsersService {
 
     private String doesFileExist(String filePath, String fileName){
         try {
-            String[] commonExtensions = {".jpeg", ".jpg", ".png"};
+            String[] commonExtensions = {".jpeg", ".jpg", ".png", ".JPEG", ".PNG", ".JPG"};
             System.out.println("Checking files");
             for (String extension : commonExtensions) {
                 String extendedFilePath = filePath + "/" + fileName + extension;
