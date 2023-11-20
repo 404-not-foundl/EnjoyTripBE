@@ -261,8 +261,6 @@ public class UsersService {
                     Files.createDirectories(filePath.getParent());
                     Files.copy(userImage.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
                     String imageUrl = DomainName.DOMAIN_NAME.getDomain()+ ProfileImageDomain.CACHE_DOMAIN.getDomain()+fileName;
-                    user.setUserProfileImage(imageUrl);
-                    usersRepository.save(user);
                     return CacheImageUpdateResponseDto.builder()
                             .ImageUrl(imageUrl)
                             .build();
