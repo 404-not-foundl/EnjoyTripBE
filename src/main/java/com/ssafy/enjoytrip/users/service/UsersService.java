@@ -245,15 +245,15 @@ public class UsersService {
             Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
             if(user.getId() != null){
                 String fileName = doesFileExist("classpath:/static/uploadFile/userProfile/cache", "user_" + user.getId() + "_profile");
-                if(fileName != null || userImage.getSize() == 0){
+                if(fileName != null){
                     try{
                         Files.deleteIfExists(Path.of(uploadDirUserImgCache, fileName));
                     }catch (IOException e){
                         e.printStackTrace();
                     }
-                    if(userImage.getSize() == 0){
-                        return CacheImageUpdateResponseDto.builder().build();
-                    }
+                }
+                if(userImage.getSize() == 0){
+                    return CacheImageUpdateResponseDto.builder().build();
                 }
                 fileName = "user_" + user.getId() + "_profile."+ Objects.requireNonNull(userImage.getOriginalFilename()).substring(userImage.getOriginalFilename().lastIndexOf(".") + 1);
                 Path filePath = Path.of(uploadDirUserImgCache, fileName);
