@@ -9,9 +9,11 @@ import com.ssafy.enjoytrip.travelCourses.dto.requestDto.TravelCourseSaveRequestD
 import com.ssafy.enjoytrip.travelCourses.dto.requestDto.TravelCourseUpdateRequestDto;
 import com.ssafy.enjoytrip.travelCourses.dto.responseDto.CourseInfoDto;
 import com.ssafy.enjoytrip.travelCourses.dto.responseDto.TravelCourseInfoResponseDto;
+import com.ssafy.enjoytrip.travelCourses.dto.responseDto.TravelCourseListDto;
 import com.ssafy.enjoytrip.travelCourses.entity.TravelCourseSchedule;
 import com.ssafy.enjoytrip.travelCourses.entity.TravelCourses;
 import com.ssafy.enjoytrip.travelCourses.entity.TravelMembers;
+import com.ssafy.enjoytrip.travelCourses.repository.CustomTravelCoursesRepository;
 import com.ssafy.enjoytrip.travelCourses.repository.TravelCourseScheduleRepository;
 import com.ssafy.enjoytrip.travelCourses.repository.TravelCoursesRepository;
 import com.ssafy.enjoytrip.travelCourses.repository.TravelMembersRepository;
@@ -37,6 +39,7 @@ public class TravelCoursesService {
     private final TravelMembersRepository travelMembersRepository;
     private final TravelCoursesRepository travelCoursesRepository;
     private final TravelCourseScheduleRepository travelCourseScheduleRepository;
+    private final CustomTravelCoursesRepository customTravelCoursesRepository;
 
     public ServiceControllerDataDto<Object> courseSave(TravelCourseSaveRequestDto requestDto, HttpServletRequest request){
         String userLoginId = checkCookieUserId(request).getValue();
@@ -109,7 +112,7 @@ public class TravelCoursesService {
         }
         Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
         if(user.getId() != null){
-            List<TravelCourses> travelCoursesList = travelCoursesRepository.findByUserWithDetails(user);
+            List<TravelCourseListDto> travelCoursesList = customTravelCoursesRepository.findDistinctByUserWithDetails(user);
             return ServiceControllerDataDto.builder()
                     .data(travelCoursesList)
                     .msg(MsgType.TRAVEL_COURSE_LIST_COMPLETE)
@@ -199,10 +202,17 @@ public class TravelCoursesService {
                         .build();
             }
 
+            travelCourses.setTravelTitle(requestDto.getTitle());
+            travelCourses.setStartDate(requestDto.getStartDate());
+            travelCourses.setEndDate(requestDto.getEndDate());
+            travelCourses.setTravelDays(requestDto.getTotalDays());
+
+            travelCourses.setTravelCourseSchedules(null);
             List<TravelCourseSchedule> scheduleList = new ArrayList<>();
             for(int i = 0; i < requestDto.getTotalDays(); i++){
-                for(int j = 0; j < requestDto.getCourseInfo().size(); j++){
+                for(int j = 0; j < requestDto.getCourseInfo().get(i).size(); j++){
                     TravelCourseSchedule schedule = TravelCourseSchedule.builder()
+                            .travelCourse(travelCourses)
                             .name(requestDto.getCourseInfo().get(i).get(j).getName())
                             .category(requestDto.getCourseInfo().get(i).get(j).getCategory())
                             .address(requestDto.getCourseInfo().get(i).get(j).getAddress())
@@ -232,7 +242,7 @@ public class TravelCoursesService {
                 .build();
     }
 
-    public ServiceControllerDataDto<Object> courseDelete(TravelCourseDeleteRequestDto requestDto, HttpServletRequest request){
+    public ServiceControllerDataDto<Object> courseDelete(Long travelCourseId, HttpServletRequest request){
         String userLoginId = checkCookieUserId(request).getValue();
         if(userLoginId == null){
             return ServiceControllerDataDto.builder()
@@ -242,7 +252,7 @@ public class TravelCoursesService {
         }
         Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
         if(user.getId() != null){
-            TravelCourses travelCourses = travelCoursesRepository.findTravelCoursesByIdAndDeletedDateIsNull(requestDto.getTravelCourseId()).orElse(null);
+            TravelCourses travelCourses = travelCoursesRepository.findTravelCoursesByIdAndDeletedDateIsNull(travelCourseId).orElse(null);
             if(travelCourses == null){
                 return ServiceControllerDataDto.builder()
                         .data(false)

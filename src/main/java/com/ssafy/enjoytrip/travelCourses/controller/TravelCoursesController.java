@@ -45,8 +45,8 @@ public class TravelCoursesController {
     }
 
     @DeleteMapping("/course")
-    public ApiResponseDto<Object> courseDelete(@RequestBody TravelCourseDeleteRequestDto requestDto, HttpServletRequest request){
-        ServiceControllerDataDto<Object> apiResponseDto = travelCoursesService.courseDelete(requestDto, request);
+    public ApiResponseDto<Object> courseDelete(@RequestParam("travelCourseId") Long travelCourseId, HttpServletRequest request){
+        ServiceControllerDataDto<Object> apiResponseDto = travelCoursesService.courseDelete(travelCourseId, request);
         return ResponseUtil.ok(apiResponseDto.getData(), apiResponseDto.getMsg());
     }
 }

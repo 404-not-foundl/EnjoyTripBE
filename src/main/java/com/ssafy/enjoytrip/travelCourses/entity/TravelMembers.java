@@ -1,5 +1,6 @@
 package com.ssafy.enjoytrip.travelCourses.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.enjoytrip.users.entity.Users;
 import lombok.*;
 
@@ -18,6 +19,7 @@ public class TravelMembers {
 
     @ManyToOne
     @JoinColumn(name = "travel_courses_id")  // Corrected to match the column name in TravelCourses
+    @JsonIgnore
     private TravelCourses travelCourse;
 
     @ManyToOne

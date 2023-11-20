@@ -13,11 +13,5 @@ import java.util.Optional;
 
 @Repository
 public interface TravelCoursesRepository extends JpaRepository<TravelCourses, Long> {
-    List<TravelCourses> findAllByTravelMembersUser_IdAndDeletedDateIsNull(Long userId);
     Optional<TravelCourses> findTravelCoursesByIdAndDeletedDateIsNull(Long id);
-    @Query("SELECT DISTINCT tc FROM TravelCourses tc " +
-            "LEFT JOIN FETCH tc.travelMembers tm " +
-            "LEFT JOIN FETCH tc.travelCourseSchedules tcs " +
-            "WHERE tm.user = :user AND tc.deletedDate IS NULL")
-    List<TravelCourses> findByUserWithDetails(@Param("user") Users user);
 }
