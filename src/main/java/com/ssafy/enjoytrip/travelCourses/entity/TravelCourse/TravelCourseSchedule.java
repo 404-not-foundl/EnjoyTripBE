@@ -1,9 +1,8 @@
-package com.ssafy.enjoytrip.travelCourses.entity;
+package com.ssafy.enjoytrip.travelCourses.entity.TravelCourse;
 
 import lombok.*;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 
 @Builder
 @Entity

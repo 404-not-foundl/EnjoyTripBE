@@ -1,4 +1,4 @@
-package com.ssafy.enjoytrip.travelCourses.entity;
+package com.ssafy.enjoytrip.travelCourses.entity.TravelCourse;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.enjoytrip.users.entity.Users;

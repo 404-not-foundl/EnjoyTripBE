@@ -1,4 +1,4 @@
-package com.ssafy.enjoytrip.travelCourses.dto.requestDto;
+package com.ssafy.enjoytrip.travelCourses.dto.requestDto.TravelCourse;
 
 import lombok.*;
 

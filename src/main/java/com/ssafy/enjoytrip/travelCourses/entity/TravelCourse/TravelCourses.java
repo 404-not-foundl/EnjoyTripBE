@@ -1,10 +1,8 @@
-package com.ssafy.enjoytrip.travelCourses.entity;
+package com.ssafy.enjoytrip.travelCourses.entity.TravelCourse;
 
 import com.ssafy.enjoytrip.common.entity.BaseTime;
 import com.ssafy.enjoytrip.users.entity.Users;
 import lombok.*;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.ArrayList;

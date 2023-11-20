@@ -1,6 +1,6 @@
-package com.ssafy.enjoytrip.travelCourses.repository;
+package com.ssafy.enjoytrip.travelCourses.repository.TravelCourse;
 
-import com.ssafy.enjoytrip.travelCourses.entity.TravelMembers;
+import com.ssafy.enjoytrip.travelCourses.entity.TravelCourse.TravelMembers;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

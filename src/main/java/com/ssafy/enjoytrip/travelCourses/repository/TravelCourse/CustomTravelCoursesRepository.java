@@ -1,7 +1,7 @@
-package com.ssafy.enjoytrip.travelCourses.repository;
+package com.ssafy.enjoytrip.travelCourses.repository.TravelCourse;
 
-import com.ssafy.enjoytrip.travelCourses.dto.responseDto.TravelCourseListDto;
-import com.ssafy.enjoytrip.travelCourses.entity.TravelCourses;
+import com.ssafy.enjoytrip.travelCourses.dto.responseDto.TravelCourse.TravelCourseListDto;
+import com.ssafy.enjoytrip.travelCourses.entity.TravelCourse.TravelCourses;
 import com.ssafy.enjoytrip.users.entity.Users;
 import org.springframework.stereotype.Repository;
 

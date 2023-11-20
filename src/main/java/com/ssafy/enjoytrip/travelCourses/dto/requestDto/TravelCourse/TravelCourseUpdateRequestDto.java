@@ -1,13 +1,12 @@
-package com.ssafy.enjoytrip.travelCourses.dto.requestDto;
+package com.ssafy.enjoytrip.travelCourses.dto.requestDto.TravelCourse;
 
-import com.ssafy.enjoytrip.travelCourses.entity.TravelCourseSchedule;
 import lombok.Getter;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
-public class TravelCourseSaveRequestDto {
+public class TravelCourseUpdateRequestDto {
+    private Long travelCourseId;
     private String title;
     private String startDate;
     private String endDate;

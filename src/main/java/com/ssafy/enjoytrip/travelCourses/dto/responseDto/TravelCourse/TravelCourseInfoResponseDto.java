@@ -1,6 +1,5 @@
-package com.ssafy.enjoytrip.travelCourses.dto.responseDto;
+package com.ssafy.enjoytrip.travelCourses.dto.responseDto.TravelCourse;
 
-import com.ssafy.enjoytrip.travelCourses.entity.TravelCourseSchedule;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
