@@ -6,7 +6,10 @@ import lombok.Setter;
 
 import java.util.List;
 
+import io.swagger.annotations.ApiModel;
+
 @Getter@Setter@Builder
+@ApiModel(description = "Response DTO for Travel Course Information")
 public class TravelCourseInfoResponseDto {
     private Long travelCourseId;
     private String title;
