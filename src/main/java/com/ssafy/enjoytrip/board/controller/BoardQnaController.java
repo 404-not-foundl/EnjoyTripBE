@@ -1,8 +1,8 @@
 package com.ssafy.enjoytrip.board.controller;
 
-import com.ssafy.enjoytrip.board.dto.request.*;
-import com.ssafy.enjoytrip.board.dto.response.BoardQnaGetArticleResponseDto;
-import com.ssafy.enjoytrip.board.dto.response.BoardQnaListOfArticleResponseDto;
+import com.ssafy.enjoytrip.board.dto.request.BoardQna.*;
+import com.ssafy.enjoytrip.board.dto.response.BoardQna.BoardQnaGetArticleResponseDto;
+import com.ssafy.enjoytrip.board.dto.response.BoardQna.BoardQnaListOfArticleResponseDto;
 import com.ssafy.enjoytrip.board.service.BoardQnaService;
 import com.ssafy.enjoytrip.common.response.ApiResponseDto;
 import com.ssafy.enjoytrip.common.response.ResponseUtil;

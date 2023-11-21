@@ -28,6 +28,6 @@ public class BoardCommunityArticle extends BaseTime {
 
     private int hit;
 
-    @OneToMany(mappedBy = "boardCommunityArticle", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "boardCommunityArticle", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<ParentComment> comments;
 }

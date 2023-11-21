@@ -1,4 +1,4 @@
-package com.ssafy.enjoytrip.board.dto.response;
+package com.ssafy.enjoytrip.board.dto.response.BoardQna;
 
 import lombok.Builder;
 import lombok.Getter;
