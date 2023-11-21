@@ -35,8 +35,8 @@ public class TravelCoursesController {
     }
 
     @GetMapping("/course")
-    public ApiResponseDto<Object> courseInfo(@RequestBody TravelCourseInfoRequestDto requestDto, HttpServletRequest request){
-        ServiceControllerDataDto<Object> apiResponseDto = travelCoursesService.courseInfo(requestDto, request);
+    public ApiResponseDto<Object> courseInfo(@RequestParam("travelCourseId") Long travelCourseId, HttpServletRequest request){
+        ServiceControllerDataDto<Object> apiResponseDto = travelCoursesService.courseInfo(travelCourseId, request);
         return ResponseUtil.ok(apiResponseDto.getData(), apiResponseDto.getMsg());
     }
 

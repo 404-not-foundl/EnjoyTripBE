@@ -123,20 +123,20 @@ public class TravelCoursesService {
                 .build();
     }
 
-    public ServiceControllerDataDto<Object> courseInfo(TravelCourseInfoRequestDto requestDto, HttpServletRequest request){
+    public ServiceControllerDataDto<Object> courseInfo(Long travelCourseId, HttpServletRequest request){
         String userLoginId = checkCookieUserId(request).getValue();
         if(userLoginId == null){
             return ServiceControllerDataDto.builder()
-                    .data(false)
+                    .data(null)
                     .msg(MsgType.NO_COOKIE_FOUND)
                     .build();
         }
         Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
         if(user.getId() != null){
-            TravelCourses travelCourses = travelCoursesRepository.findTravelCoursesByIdAndDeletedDateIsNull(requestDto.getTravelCourseId()).orElse(null);
+            TravelCourses travelCourses = travelCoursesRepository.findTravelCoursesByIdAndDeletedDateIsNull(travelCourseId).orElse(null);
             if(travelCourses == null){
                 return ServiceControllerDataDto.builder()
-                        .data(false)
+                        .data(null)
                         .msg(MsgType.NO_SUCH_TRAVEL_COURSE)
                         .build();
             }
@@ -177,7 +177,7 @@ public class TravelCoursesService {
         }
 
         return ServiceControllerDataDto.builder()
-                .data(false)
+                .data(null)
                 .msg(MsgType.USER_NOT_FOUND)
                 .build();
     }
@@ -262,7 +262,7 @@ public class TravelCoursesService {
             travelCoursesRepository.save(travelCourses);
 
             return ServiceControllerDataDto.builder()
-                    .data(false)
+                    .data(true)
                     .msg(MsgType.TRAVEL_COURSE_DELETE_COMPLETE)
                     .build();
         }

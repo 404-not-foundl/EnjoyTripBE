@@ -7,10 +7,11 @@ import lombok.Getter;
 
 @Builder
 @Getter
-@JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponseDto<T> {
 
     private T data;
     private String msg;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private ErrorResponse error;
 }
