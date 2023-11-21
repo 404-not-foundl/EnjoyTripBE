@@ -85,6 +85,7 @@ public class TravelLikeService {
         List<TravelLikeListResponseDto> travelLikeListResponseDtoList = new ArrayList<>();
         for(TravelLike travelLike : travelLikeList){
             TravelLikeListResponseDto travelLikeListResponseDto = TravelLikeListResponseDto.builder()
+                    .id(travelLike.getId())
                     .name(travelLike.getName())
                     .category(travelLike.getCategory())
                     .address(travelLike.getAddress())
