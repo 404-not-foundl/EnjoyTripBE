@@ -3,6 +3,7 @@ package com.ssafy.enjoytrip.travelCourses.service;
 import com.ssafy.enjoytrip.common.response.MsgType;
 import com.ssafy.enjoytrip.common.response.ServiceControllerDataDto;
 import com.ssafy.enjoytrip.travelCourses.dto.requestDto.TravelLike.TravelLikeSaveRequestDto;
+import com.ssafy.enjoytrip.travelCourses.dto.responseDto.TravelLike.TravelLikeListResponseDto;
 import com.ssafy.enjoytrip.travelCourses.entity.TravelLike.TravelLike;
 import com.ssafy.enjoytrip.travelCourses.repository.TravelLike.TravelLikeRepository;
 import com.ssafy.enjoytrip.users.entity.Users;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,8 +34,8 @@ public class TravelLikeService {
         }
         Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
         if(user.getId() != null){
-            TravelLike DBTravelLike = travelLikeRepository.findAllByAddressAndCategoryAndAddressAndImageAndLatitudeAndLongitudeAndUser(requestDto.getName(), requestDto.getCategory(), requestDto.getAddress(), requestDto.getImg(), requestDto.getLat(), requestDto.getLng(), user);
-            if(DBTravelLike == null){
+            TravelLike DBTravelLike = travelLikeRepository.findByNameAndAddressAndCategoryAndLatitudeAndLongitudeAndUser(requestDto.getName(), requestDto.getAddress(), requestDto.getCategory(), requestDto.getLat(), requestDto.getLng(), user);
+            if(DBTravelLike != null){
                 return ServiceControllerDataDto.builder()
                         .data(false)
                         .msg(MsgType.TRAVEL_LIKE_SAVE_FAIL)
@@ -80,8 +82,21 @@ public class TravelLikeService {
         }
 
         List<TravelLike> travelLikeList = travelLikeRepository.findAllByUser(user);
+        List<TravelLikeListResponseDto> travelLikeListResponseDtoList = new ArrayList<>();
+        for(TravelLike travelLike : travelLikeList){
+            TravelLikeListResponseDto travelLikeListResponseDto = TravelLikeListResponseDto.builder()
+                    .name(travelLike.getName())
+                    .category(travelLike.getCategory())
+                    .address(travelLike.getAddress())
+                    .img(travelLike.getImage())
+                    .lat(travelLike.getLatitude())
+                    .lng(travelLike.getLongitude())
+                    .build();
+            travelLikeListResponseDtoList.add(travelLikeListResponseDto);
+        }
+
         return ServiceControllerDataDto.builder()
-                .data(travelLikeList)
+                .data(travelLikeListResponseDtoList)
                 .msg(MsgType.TRAVEL_LIKE_LIST_SENT)
                 .build();
     }

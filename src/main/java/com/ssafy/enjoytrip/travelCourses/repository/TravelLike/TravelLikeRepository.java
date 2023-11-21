@@ -9,7 +9,8 @@ import java.util.List;
 
 @Repository
 public interface TravelLikeRepository extends JpaRepository<TravelLike, Long> {
-    TravelLike findAllByAddressAndCategoryAndAddressAndImageAndLatitudeAndLongitudeAndUser(String name, String category, String address, String image, double latitude, double longitude, Users user);
     List<TravelLike> findAllByUser(Users user);
     TravelLike findAllById(Long id);
+
+    TravelLike findByNameAndAddressAndCategoryAndLatitudeAndLongitudeAndUser(String name, String address, String category, double lat, double lng, Users user);
 }
