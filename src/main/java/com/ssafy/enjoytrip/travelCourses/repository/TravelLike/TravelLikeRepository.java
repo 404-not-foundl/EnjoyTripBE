@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface TravelLikeRepository extends JpaRepository<TravelLike, Long> {
     List<TravelLike> findAllByUser(Users user);
-    TravelLike findAllById(Long id);
 
+    TravelLike findByUserAndContentIdAndContentTypeId(Users user, String contentId, String contentTypeId);
     TravelLike findByNameAndAddressAndCategoryAndLatitudeAndLongitudeAndUser(String name, String address, String category, double lat, double lng, Users user);
 }

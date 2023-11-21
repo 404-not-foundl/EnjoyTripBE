@@ -21,6 +21,8 @@ public class TravelLike {
     @JoinColumn(name = "user_id")
     private Users user;
 
+    private String contentId;
+    private String contentTypeId;
     private String name;
     private String category;
     private String address;

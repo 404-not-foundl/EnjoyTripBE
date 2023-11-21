@@ -7,7 +7,8 @@ import lombok.Setter;
 @Getter@Setter@Builder
 public class TravelLikeListResponseDto {
 
-    private Long id;
+    private String contentId;
+    private String contentTypeId;
     private String name;
     private String category;
     private String address;

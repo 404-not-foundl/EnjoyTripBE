@@ -4,6 +4,8 @@ import lombok.Getter;
 
 @Getter
 public class TravelLikeSaveRequestDto {
+    private String contentId;
+    private String contentTypeId;
     private String name;
     private String category;
     private String address;

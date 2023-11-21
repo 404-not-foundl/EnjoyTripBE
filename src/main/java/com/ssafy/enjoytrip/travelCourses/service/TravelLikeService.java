@@ -44,6 +44,8 @@ public class TravelLikeService {
 
             TravelLike travelLike = TravelLike.builder()
                     .user(user)
+                    .contentId(requestDto.getContentId())
+                    .contentTypeId(requestDto.getContentTypeId())
                     .name(requestDto.getName())
                     .category(requestDto.getCategory())
                     .address(requestDto.getAddress())
@@ -85,7 +87,8 @@ public class TravelLikeService {
         List<TravelLikeListResponseDto> travelLikeListResponseDtoList = new ArrayList<>();
         for(TravelLike travelLike : travelLikeList){
             TravelLikeListResponseDto travelLikeListResponseDto = TravelLikeListResponseDto.builder()
-                    .id(travelLike.getId())
+                    .contentId(travelLike.getContentId())
+                    .contentTypeId(travelLike.getContentTypeId())
                     .name(travelLike.getName())
                     .category(travelLike.getCategory())
                     .address(travelLike.getAddress())
@@ -102,7 +105,7 @@ public class TravelLikeService {
                 .build();
     }
 
-    public ServiceControllerDataDto<Object> likeDelete(Long likeId, HttpServletRequest request){
+    public ServiceControllerDataDto<Object> likeDelete(String contentId, String contentTypeId, HttpServletRequest request){
         String userLoginId = checkCookieUserId(request).getValue();
         if(userLoginId == null){
             return ServiceControllerDataDto.builder()
@@ -117,8 +120,7 @@ public class TravelLikeService {
                     .msg(MsgType.USER_NOT_FOUND)
                     .build();
         }
-
-        TravelLike travelLike = travelLikeRepository.findAllById(likeId);
+        TravelLike travelLike = travelLikeRepository.findByUserAndContentIdAndContentTypeId(user, contentId, contentTypeId);
         if(travelLike == null){
             return ServiceControllerDataDto.builder()
                     .data(false)

@@ -77,8 +77,8 @@ public class TravelCoursesController {
 
     @DeleteMapping("/like")
     @ApiOperation(value = "Delete the attraction like", notes = "Attraction like Delete")
-    public ApiResponseDto<Object> likeDelete(@RequestParam("likeId") Long likeId, HttpServletRequest request){
-        ServiceControllerDataDto<Object> apiResponseDto = travelLikeService.likeDelete(likeId, request);
+    public ApiResponseDto<Object> likeDelete(@RequestParam("contentId") String contentId, @RequestParam("contentTypeId") String contentTypeId, HttpServletRequest request){
+        ServiceControllerDataDto<Object> apiResponseDto = travelLikeService.likeDelete(contentId, contentTypeId, request);
         return ResponseUtil.ok(apiResponseDto.getData(), apiResponseDto.getMsg());
     }
 }
