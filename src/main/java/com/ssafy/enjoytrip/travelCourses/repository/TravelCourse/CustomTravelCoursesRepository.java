@@ -28,7 +28,7 @@ public class CustomTravelCoursesRepository {
         for(TravelCourses travelCourses : query.getResultList()){
             TravelCourseListDto travelCourseListDto = TravelCourseListDto.builder()
                     .id(travelCourses.getId())
-                    .travelTitle(travelCourses.getTravelTitle())
+                    .title(travelCourses.getTravelTitle())
                     .startDate(travelCourses.getStartDate())
                     .endDate(travelCourses.getEndDate())
                     .travelDays(travelCourses.getTravelDays())
