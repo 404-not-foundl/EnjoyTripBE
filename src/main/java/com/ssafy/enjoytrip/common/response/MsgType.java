@@ -47,6 +47,9 @@ public enum MsgType {
     TRAVEL_LIKE_NOT_FOUND("좋아요를 찾지 못하였습니다."),
     TRAVEL_LIKE_DELETE_COMPLETE("좋아요 삭제 완료"),
 
+    // COMMUNITY BOARD
+    COMMUNITY_BOARD_SAVE_COMPLETE("자유게시판 저장 완료"),
+
     // FILES
     NO_FILE_EXIST("파일이 존재하지 않습니다."),
     FILE_UPLOAD_FAIL("파일 업로드에 실패하였습니다."),

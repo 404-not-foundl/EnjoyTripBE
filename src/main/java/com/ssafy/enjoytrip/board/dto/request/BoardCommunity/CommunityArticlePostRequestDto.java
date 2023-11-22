@@ -5,7 +5,7 @@ import lombok.Getter;
 import javax.persistence.Lob;
 
 @Getter
-public class CommunityListRequestDto {
+public class CommunityArticlePostRequestDto {
 
     private String title;
 

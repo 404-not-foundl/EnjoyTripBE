@@ -24,7 +24,7 @@ public class BoardCommunityArticle extends BaseTime {
     private String communityBoardTitle;
 
     @Lob
-    private String communityBoardContext;
+    private String communityBoardContent;
 
     private int hit;
 
