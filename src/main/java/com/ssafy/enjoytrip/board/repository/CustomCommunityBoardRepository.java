@@ -10,6 +10,4 @@ public class CustomCommunityBoardRepository {
 
     @PersistenceContext
     private EntityManager entityManager;
-
-
 }

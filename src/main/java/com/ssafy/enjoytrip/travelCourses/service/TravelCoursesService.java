@@ -199,7 +199,6 @@ public class TravelCoursesService {
                         .msg(MsgType.NO_SUCH_TRAVEL_COURSE)
                         .build();
             }
-
             travelCourses.setTravelTitle(requestDto.getTitle());
             travelCourses.setStartDate(requestDto.getStartDate());
             travelCourses.setEndDate(requestDto.getEndDate());
