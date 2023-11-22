@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface BoardCommunityRepository extends JpaRepository<BoardCommunityArticle, Long> {
-    Page<BoardCommunityArticle> findAllByDeletedDateIsNull();
+//    Page<BoardCommunityArticle> findAllByDeletedDateIsNull();
 }

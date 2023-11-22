@@ -3,6 +3,8 @@ package com.ssafy.enjoytrip.board.service;
 import com.ssafy.enjoytrip.board.dto.request.BoardCommunity.CommunityArticlePostRequestDto;
 import com.ssafy.enjoytrip.board.entity.community.BoardCommunityArticle;
 import com.ssafy.enjoytrip.board.repository.BoardCommunityRepository;
+import com.ssafy.enjoytrip.common.exception.CustomException;
+import com.ssafy.enjoytrip.common.exception.ErrorType;
 import com.ssafy.enjoytrip.common.response.ApiResponseDto;
 import com.ssafy.enjoytrip.common.response.MsgType;
 import com.ssafy.enjoytrip.common.response.ServiceControllerDataDto;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -67,36 +70,24 @@ public class BoardCommunityService {
     }
 
     private CookieUserCheck checkFilter(HttpServletRequest request){
-        String userLoginId = checkCookieUserId(request).getValue();
+        Cookie[] cookies = request.getCookies();
+        String userLoginId = null;
+        if(cookies != null){
+            for(Cookie cookie : cookies){
+                if(cookie.getName().equals("userId")){
+                    userLoginId = cookie.getValue();
+                }
+            }
+        }
         if(userLoginId == null){
-            return CookieUserCheck.builder()
-                    .user(null)
-                    .msg(MsgType.NO_COOKIE_FOUND)
-                    .build();
+            throw new CustomException(ErrorType.NOT_FOUND_USER);
         }
         Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
         if(user.getId() == null){
-            return CookieUserCheck.builder()
-                    .user(null)
-                    .msg(MsgType.USER_NOT_FOUND)
-                    .build();
+            throw new CustomException(ErrorType.NOT_FOUND_USER);
         }
         return CookieUserCheck.builder()
                 .user(user)
                 .build();
-    }
-
-    private Cookie checkCookieUserId(HttpServletRequest request){
-        Cookie[] cookies = request.getCookies();
-
-        if(cookies != null){
-            for(Cookie cookie : cookies){
-                if(cookie.getName().equals("userId")){
-                    return cookie;
-                }
-            }
-        }
-
-        return null;
     }
 }
