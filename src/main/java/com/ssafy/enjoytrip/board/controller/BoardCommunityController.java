@@ -1,5 +1,6 @@
 package com.ssafy.enjoytrip.board.controller;
 
+import com.ssafy.enjoytrip.board.dto.request.BoardCommunity.CommunityArticleListRequestDto;
 import com.ssafy.enjoytrip.board.dto.request.BoardCommunity.CommunityArticlePostRequestDto;
 import com.ssafy.enjoytrip.board.service.BoardCommunityService;
 import com.ssafy.enjoytrip.common.response.ApiResponseDto;
@@ -18,8 +19,8 @@ public class BoardCommunityController {
     private final BoardCommunityService boardCommunityService;
 
     @GetMapping("/")
-    public ApiResponseDto<Object> communityList(@RequestParam("pageToMove") int pageToMove, @RequestParam("shownArticleNum") int shownArticleNum, HttpServletRequest request){
-        ServiceControllerDataDto<Object> apiResponseDto = boardCommunityService.communityArticleList(pageToMove, shownArticleNum, request);
+    public ApiResponseDto<Object> communityList(@ModelAttribute CommunityArticleListRequestDto requestDto, HttpServletRequest request){
+        ServiceControllerDataDto<Object> apiResponseDto = boardCommunityService.communityArticleList(requestDto, request);
         return ResponseUtil.ok(apiResponseDto.getData(), apiResponseDto.getMsg());
     }
 

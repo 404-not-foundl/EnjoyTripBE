@@ -1,5 +1,6 @@
 package com.ssafy.enjoytrip.board.service;
 
+import com.ssafy.enjoytrip.board.dto.request.BoardCommunity.CommunityArticleListRequestDto;
 import com.ssafy.enjoytrip.board.dto.request.BoardCommunity.CommunityArticlePostRequestDto;
 import com.ssafy.enjoytrip.board.entity.community.BoardCommunityArticle;
 import com.ssafy.enjoytrip.board.repository.BoardCommunityRepository;
@@ -29,31 +30,18 @@ public class BoardCommunityService {
     private final BoardCommunityRepository boardCommunityRepository;
     private final UsersRepository usersRepository;
 
-    public ServiceControllerDataDto<Object> communityArticleList(int pageToMove, int shownArticleNum,HttpServletRequest request){
-        CookieUserCheck cookieUserCheck = checkFilter(request);
-        if(cookieUserCheck.getMsg() != null){
-            return ServiceControllerDataDto.builder()
-                    .data(false)
-                    .msg(cookieUserCheck.getMsg())
-                    .build();
-        }
-        Users user = cookieUserCheck.getUser();
+    public ServiceControllerDataDto<Object> communityArticleList(CommunityArticleListRequestDto requestDto, HttpServletRequest request){
+        Users user = checkFilter(request);
 
-        Pageable pageable = PageRequest.of(pageToMove-1, shownArticleNum, Sort.by(Sort.Order.desc("articleId")));
+        Pageable pageable = PageRequest.of(requestDto.getPageToMove() -1, requestDto.getShownArticleNum(), Sort.by(Sort.Order.desc("articleId")));
         Page<BoardCommunityArticle> page;
+
 
         return null;
     }
 
     public ServiceControllerDataDto<Object> communityArticlePost(CommunityArticlePostRequestDto requestDto, HttpServletRequest request){
-        CookieUserCheck cookieUserCheck = checkFilter(request);
-        if(cookieUserCheck.getMsg() != null){
-            return ServiceControllerDataDto.builder()
-                    .data(false)
-                    .msg(cookieUserCheck.getMsg())
-                    .build();
-        }
-        Users user = cookieUserCheck.getUser();
+        Users user = checkFilter(request);
 
         BoardCommunityArticle boardCommunityArticle = BoardCommunityArticle.builder()
                 .user(user)
@@ -69,7 +57,7 @@ public class BoardCommunityService {
                 .build();
     }
 
-    private CookieUserCheck checkFilter(HttpServletRequest request){
+    private Users checkFilter(HttpServletRequest request){
         Cookie[] cookies = request.getCookies();
         String userLoginId = null;
         if(cookies != null){
@@ -86,8 +74,6 @@ public class BoardCommunityService {
         if(user.getId() == null){
             throw new CustomException(ErrorType.NOT_FOUND_USER);
         }
-        return CookieUserCheck.builder()
-                .user(user)
-                .build();
+        return user;
     }
 }
