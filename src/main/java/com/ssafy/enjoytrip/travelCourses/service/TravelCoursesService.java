@@ -167,7 +167,7 @@ public class TravelCoursesService {
                     .startDate(travelCourses.getStartDate())
                     .endDate(travelCourses.getEndDate())
                     .totalDays(travelCourses.getTravelDays())
-                    .coursesInfo(finalSchedule)
+                    .courseInfo(finalSchedule)
                     .build();
 
             return ServiceControllerDataDto.builder()

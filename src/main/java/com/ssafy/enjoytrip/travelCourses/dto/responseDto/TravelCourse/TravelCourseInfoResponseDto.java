@@ -16,5 +16,5 @@ public class TravelCourseInfoResponseDto {
     private String startDate;
     private String endDate;
     private int totalDays;
-    List<List<CourseInfoDto>> coursesInfo;
+    List<List<CourseInfoDto>> courseInfo;
 }
