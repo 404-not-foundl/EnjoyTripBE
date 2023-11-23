@@ -27,11 +27,11 @@ public class CustomTravelCoursesRepository {
         List<TravelCourseListDto> travelCourseList = new ArrayList<>();
         for(TravelCourses travelCourses : query.getResultList()){
             TravelCourseListDto travelCourseListDto = TravelCourseListDto.builder()
-                    .id(travelCourses.getId())
+                    .travelCourseId(travelCourses.getId())
                     .title(travelCourses.getTravelTitle())
                     .startDate(travelCourses.getStartDate())
                     .endDate(travelCourses.getEndDate())
-                    .travelDays(travelCourses.getTravelDays())
+                    .totalDays(travelCourses.getTravelDays())
                     .build();
             travelCourseList.add(travelCourseListDto);
         }

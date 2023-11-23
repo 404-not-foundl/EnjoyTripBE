@@ -6,9 +6,9 @@ import lombok.Setter;
 
 @Getter@Setter@Builder
 public class TravelCourseListDto {
-    private Long id;
+    private Long travelCourseId;
     private String title;
     private String startDate;
     private String endDate;
-    private int travelDays;
+    private int totalDays;
 }
