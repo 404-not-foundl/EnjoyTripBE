@@ -369,16 +369,13 @@ public class UsersService {
     private String doesFileExist(String filePath, String fileName){
         try {
             String[] commonExtensions = {".jpeg", ".jpg", ".png", ".JPEG", ".PNG", ".JPG"};
-            System.out.println("Checking files");
             for (String extension : commonExtensions) {
                 String extendedFilePath = filePath + "/" + fileName + extension;
-                System.out.println("extendedFilePath = " + extendedFilePath);
                 Resource resource = resourceLoader.getResource(extendedFilePath);
                 if (resource.exists()) {
                     return fileName + extension;
                 }
             }
-            System.out.println("none");
             return null;
         } catch (Exception e) {
             return null;
