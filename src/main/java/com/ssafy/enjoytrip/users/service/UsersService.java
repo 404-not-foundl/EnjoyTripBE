@@ -327,17 +327,6 @@ public class UsersService {
         return CacheImageToProfileImageResponseDto.builder().build();
     }
 
-    private void deleteProfileImage(String fileNamePrefix) {
-        String fileName = fileNamePrefix + "." + getFileExtension(Path.of(uploadDirUserImg, fileNamePrefix));
-        Path profileFilePath = Path.of(uploadDirUserImg, fileName);
-
-        try {
-            Files.deleteIfExists(profileFilePath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private Cookie checkCookieUserId(HttpServletRequest request){
         Cookie[] cookies = request.getCookies();
 
@@ -357,13 +346,6 @@ public class UsersService {
         int lastDotIndex = fileName.lastIndexOf(".");
 
         return lastDotIndex == -1 ? null : fileName.substring(lastDotIndex + 1);
-    }
-
-    private Path findFileWithPrefix(Path directory, String fileNamePrefix) throws IOException {
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory, fileNamePrefix + "*")) {
-            Iterator<Path> iterator = stream.iterator();
-            return iterator.hasNext() ? iterator.next() : null;
-        }
     }
 
     private String doesFileExist(String filePath, String fileName){
