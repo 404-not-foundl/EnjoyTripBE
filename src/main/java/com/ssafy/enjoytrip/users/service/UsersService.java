@@ -3,6 +3,7 @@ package com.ssafy.enjoytrip.users.service;
 import com.ssafy.enjoytrip.common.address.DomainName;
 import com.ssafy.enjoytrip.common.address.image.ProfileImageDomain;
 import com.ssafy.enjoytrip.common.response.MsgType;
+import com.ssafy.enjoytrip.common.response.ServiceControllerDataDto;
 import com.ssafy.enjoytrip.users.dto.request.*;
 import com.ssafy.enjoytrip.users.dto.response.CacheImageToProfileImageResponseDto;
 import com.ssafy.enjoytrip.users.dto.response.CacheImageUpdateResponseDto;
@@ -362,5 +363,16 @@ public class UsersService {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public ServiceControllerDataDto<Object> setImageTest(MultipartFile file){
+        Path path = Path.of("src/main/resources/static/uploadFile", "test");
+        try{
+            Files.createDirectories(path.getParent());
+            Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+        }catch (IOException e){}
+        return ServiceControllerDataDto.builder()
+                .data("http://localhost:8080/static/uploadFile/test")
+                .build();
     }
 }

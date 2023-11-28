@@ -3,6 +3,7 @@ package com.ssafy.enjoytrip.users.controller;
 import com.ssafy.enjoytrip.common.response.ApiResponseDto;
 import com.ssafy.enjoytrip.common.response.MsgType;
 import com.ssafy.enjoytrip.common.response.ResponseUtil;
+import com.ssafy.enjoytrip.common.response.ServiceControllerDataDto;
 import com.ssafy.enjoytrip.users.dto.request.*;
 import com.ssafy.enjoytrip.users.dto.response.CacheImageToProfileImageResponseDto;
 import com.ssafy.enjoytrip.users.dto.response.CacheImageUpdateResponseDto;
@@ -111,5 +112,10 @@ public class UsersController {
     @ApiOperation(value = "Cache Image to Profile Image", notes = "Changing Profile image to Cache image")
     public ApiResponseDto<CacheImageToProfileImageResponseDto> cacheImgToProfileImg(HttpServletRequest request){
         return ResponseUtil.ok(usersService.cacheImgToProfileImg(request));
+    }
+
+    @PostMapping("/test-image")
+    public ApiResponseDto<ServiceControllerDataDto<Object>> testImage(@RequestParam("userImage")MultipartFile file){
+        return ResponseUtil.ok(usersService.setImageTest(file));
     }
 }
