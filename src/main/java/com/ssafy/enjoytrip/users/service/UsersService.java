@@ -41,7 +41,7 @@ public class UsersService {
     private String uploadDirUserImg;
     @Value("${upload.directory.cacheUserImage}")
     private String uploadDirUserImgCache;
-    private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    private final PasswordEncoder passwordEncoder;
     private final UsersRepository usersRepository;
     private final ResourceLoader resourceLoader;
 
