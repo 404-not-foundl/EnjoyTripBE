@@ -118,4 +118,9 @@ public class UsersController {
     public ApiResponseDto<ServiceControllerDataDto<Object>> testImage(@RequestParam("userImage")MultipartFile file){
         return ResponseUtil.ok(usersService.setImageTest(file));
     }
+
+    @PostMapping("/set-role/{role}")
+    public ApiResponseDto<ServiceControllerDataDto<Object>> setRole(@PathVariable String role, HttpServletRequest request){
+        return ResponseUtil.ok(usersService.roleChange(request, role));
+    }
 }

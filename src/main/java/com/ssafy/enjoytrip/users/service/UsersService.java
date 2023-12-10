@@ -8,6 +8,7 @@ import com.ssafy.enjoytrip.users.dto.request.*;
 import com.ssafy.enjoytrip.users.dto.response.CacheImageToProfileImageResponseDto;
 import com.ssafy.enjoytrip.users.dto.response.CacheImageUpdateResponseDto;
 import com.ssafy.enjoytrip.users.dto.response.UserInfoDto;
+import com.ssafy.enjoytrip.users.entity.Role;
 import com.ssafy.enjoytrip.users.entity.Users;
 import com.ssafy.enjoytrip.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -374,5 +375,26 @@ public class UsersService {
         return ServiceControllerDataDto.builder()
                 .data("http://localhost:8080/static/uploadFile/test")
                 .build();
+    }
+
+    public ServiceControllerDataDto<Object> roleChange(HttpServletRequest request, String role){
+        String userLoginId = checkCookieUserId(request).getValue();
+        Users user = usersRepository.findByUserLoginIdAndDeletedDateIsNull(userLoginId).orElse(new Users());
+
+        if(role.equals("user")){
+            user.setRole(Role.USER);
+            usersRepository.save(user);
+
+            return ServiceControllerDataDto.builder()
+                    .data("changed to user")
+                    .build();
+        }else{
+            user.setRole(Role.ADMIN);
+            usersRepository.save(user);
+
+            return ServiceControllerDataDto.builder()
+                    .data("changed to admin")
+                    .build();
+        }
     }
 }
